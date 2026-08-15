@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cloud & Intelligence — J26-IT-434 Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#07100d;--accent:#a78bfa;--accent3:#c4b5fd;--card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.08);--text:#f0e8ff;--muted:#7c6aa0;--radius:16px;--shadow:0 8px 40px rgba(0,0,0,0.55);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    .orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;opacity:.13;animation:drift 20s ease-in-out infinite alternate;}
+    .o1{width:440px;height:440px;background:#a78bfa;top:-90px;right:-70px;}
+    .o2{width:300px;height:300px;background:#38bdf8;bottom:10%;left:-50px;animation-delay:-9s;}
+    @keyframes drift{from{transform:translateY(0);}to{transform:translateY(36px);}}
+    nav{position:sticky;top:0;z-index:100;background:rgba(7,16,13,.85);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:58px;}
+    .nav-brand{font-weight:700;font-size:.9rem;color:var(--accent3);}
+    .nav-links{display:flex;align-items:center;gap:20px;}
+    .nav-links a{font-size:.8rem;color:rgba(255,255,255,.45);text-decoration:none;transition:color .2s;}
+    .nav-links a:hover,.nav-links a.active{color:var(--accent3);}
+    main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px 80px;}
+    .hero{text-align:center;padding:64px 20px 48px;}
+    .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);color:var(--accent3);font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:6px 16px;border-radius:100px;margin-bottom:22px;}
+    h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:800;line-height:1.15;background:linear-gradient(135deg,#c4b5fd,#a78bfa 50%,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:14px;}
+    .sub{font-size:.95rem;color:var(--muted);max-width:620px;margin:0 auto;line-height:1.7;}
+    section{margin-bottom:64px;}
+    .sec-label{display:flex;align-items:center;gap:10px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+    .sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
+    .sec-title{font-size:1.5rem;font-weight:700;margin-bottom:6px;}
+    .sec-desc{color:var(--muted);font-size:.9rem;margin-bottom:28px;line-height:1.65;}
+
+    /* Model cards */
+    .model-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+    .mcard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;backdrop-filter:blur(12px);position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s,border-color .25s;}
+    .mcard::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--mc,#a78bfa),transparent 55%);opacity:0;transition:opacity .3s;pointer-events:none;}
+    .mcard:hover{transform:translateY(-6px);box-shadow:var(--shadow);border-color:var(--mc,var(--accent));}
+    .mcard:hover::before{opacity:.06;}
+    .mcard-ico{font-size:2.2rem;margin-bottom:14px;}
+    .mcard-title{font-size:1rem;font-weight:700;margin-bottom:6px;}
+    .mcard-sub{font-size:.72rem;font-family:'Fira Code',monospace;color:var(--mc,var(--accent));margin-bottom:10px;opacity:.8;}
+    .mcard-desc{font-size:.82rem;color:var(--muted);line-height:1.6;}
+    .formula{margin-top:14px;font-family:'Fira Code',monospace;font-size:.76rem;background:rgba(0,0,0,.35);border-radius:8px;padding:10px 14px;border-left:3px solid var(--mc,var(--accent));color:#ccc;line-height:1.6;}
+
+    /* State machine diagram */
+    .sm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
+    .sm-state{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:18px;backdrop-filter:blur(10px);text-align:center;transition:border-color .25s,transform .25s;}
+    .sm-state:hover{border-color:var(--accent);transform:translateY(-4px);}
+    .sm-state .ico{font-size:1.8rem;margin-bottom:8px;}
+    .sm-state h4{font-size:.9rem;font-weight:700;margin-bottom:5px;color:var(--accent3);}
+    .sm-state p{font-size:.78rem;color:var(--muted);line-height:1.5;}
+
+    /* Backend table */
+    .btable{width:100%;border-collapse:collapse;font-size:.84rem;}
+    .btable th{text-align:left;padding:10px 14px;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);}
+    .btable td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;}
+    .btable tr:last-child td{border-bottom:none;}
+    .btable tr:hover td{background:rgba(255,255,255,.02);}
+    .chip{display:inline-block;padding:2px 9px;border-radius:100px;font-size:.7rem;font-family:'Fira Code',monospace;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25);color:var(--accent3);}
+
+    footer{text-align:center;padding:36px 20px;border-top:1px solid var(--border);color:var(--muted);font-size:.78rem;position:relative;z-index:1;}
+  </style>
+</head>
+<body>
+  <div class="orb o1" aria-hidden="true"></div>
+  <div class="orb o2" aria-hidden="true"></div>
+
+  <nav>
+    <div class="nav-brand">🌱 IoT Smart Agriculture <span style="font-size:.75rem;color:rgba(255,255,255,.4);font-weight:400;margin-left:6px;">/ Cloud &amp; Intelligence</span></div>
+    <div class="nav-links">
+      <a href="index.html">Hub</a>
+      <a href="system-overview.html">Overview</a>
+      <a href="data-flow.html">Data Flow</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="cloud-intelligence.html" class="active">Cloud &amp; AI</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <div class="badge">☁️ View 04 · Cloud &amp; Intelligence</div>
+      <h1>Cloud Backend &amp;<br/>AI Intelligence Layer</h1>
+      <p class="sub">The brain of the system — FAO-56 evapotranspiration models, GDD pest forecasting, the Central Coordination Engine, and the System State Machine all live here.</p>
+    </div>
+
+    <!-- Intelligence Models -->
+    <section>
+      <div class="sec-label">🧠 Intelligence Models</div>
+      <h2 class="sec-title">Algorithms &amp; Predictive Models</h2>
+      <p class="sec-desc">Three distinct models run continuously in the cloud to compute irrigation targets, fertilization doses, and pest forecasts.</p>
+
+      <div class="model-grid">
+
+        <div class="mcard" style="--mc:#22c55e;">
+          <div class="mcard-ico">💧</div>
+          <div class="mcard-title">FAO-56 Evapotranspiration Model</div>
+          <div class="mcard-sub">Penman–Monteith Reference ET</div>
+          <div class="mcard-desc">Calculates reference evapotranspiration (ETo) from weather data, then multiplies by the crop coefficient (Kc) for the current growth stage to derive the daily irrigation target.</div>
+          <div class="formula">
+ETo = [0.408Δ(Rn−G) + γ(900/(T+273))u₂(es−ea)] / [Δ + γ(1+0.34u₂)]
+<br/>
+Irrigation Target = ETo × Kc(crop stage)
+          </div>
+        </div>
+
+        <div class="mcard" style="--mc:#fbbf24;">
+          <div class="mcard-ico">🧪</div>
+          <div class="mcard-title">Dynamic Fertigation Model</div>
+          <div class="mcard-sub">EC Feedback Control Loop</div>
+          <div class="mcard-desc">Continuously monitors soil EC and moisture tension. Computes the nutrient dose required to reach the EC target without leaching, and only dispenses when moisture tension is in the optimal absorption window.</div>
+          <div class="formula">
+Dose = (EC_target − EC_current) × soil_volume × calibration_factor
+<br/>
+Constraint: θ (moisture tension) must be in optimal range
+          </div>
+        </div>
+
+        <div class="mcard" style="--mc:#f87171;">
+          <div class="mcard-ico">🐛</div>
+          <div class="mcard-title">GDD Pest Forecasting Model</div>
+          <div class="mcard-sub">Growing Degree Day Accumulation</div>
+          <div class="mcard-desc">Accumulates daily heat units from DHT22 microclimate data. When the cumulative GDD crosses a species-specific threshold, a pest emergence alert is issued 7 days in advance via push notification.</div>
+          <div class="formula">
+GDD_daily = (T_max + T_min) / 2 − T_base
+<br/>
+Alert when: ∑GDD ≥ Threshold_pest_species
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- State Machine -->
+    <section>
+      <div class="sec-label">🔄 State Machine</div>
+      <h2 class="sec-title">Central Coordination Engine States</h2>
+      <p class="sec-desc">The engine cycles through these states continuously, evaluating all sensor data and model outputs every minute.</p>
+
+      <div class="sm-grid">
+        <div class="sm-state">
+          <div class="ico">🟢</div>
+          <h4>MONITORING</h4>
+          <p>All systems nominal. Sensors polled every 60s. No action required.</p>
+        </div>
+        <div class="sm-state">
+          <div class="ico">💧</div>
+          <h4>IRRIGATING</h4>
+          <p>Irrigation valve opened. Flow meter confirms delivery. Timer tracks volume.</p>
+        </div>
+        <div class="sm-state">
+          <div class="ico">🧪</div>
+          <h4>FERTIGATING</h4>
+          <p>Nutrient pump active. EC monitored in real-time. Stops at EC target.</p>
+        </div>
+        <div class="sm-state">
+          <div class="ico">🐛</div>
+          <h4>PEST_ALERT</h4>
+          <p>GDD threshold crossed. Push alert sent. Spray schedule queued.</p>
+        </div>
+        <div class="sm-state">
+          <div class="ico">🚫</div>
+          <h4>INTERLOCK</h4>
+          <p>One or more interlocks active. Conflicting actions blocked automatically.</p>
+        </div>
+        <div class="sm-state">
+          <div class="ico">🌧️</div>
+          <h4>RAIN_SKIP</h4>
+          <p>Weather API forecast triggered. Irrigation paused until forecast clears.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Backend infrastructure -->
+    <section>
+      <div class="sec-label">🏗️ Backend Infrastructure</div>
+      <h2 class="sec-title">Cloud Services &amp; APIs</h2>
+      <p class="sec-desc">The cloud layer is composed of these services, each with a distinct responsibility.</p>
+
+      <table class="btable">
+        <thead>
+          <tr><th>Service</th><th>Role</th><th>Technology</th><th>Data</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Realtime Database</strong></td>
+            <td>Stores live sensor readings and device states</td>
+            <td><span class="chip">Firebase RTDB</span></td>
+            <td>JSON telemetry payloads</td>
+          </tr>
+          <tr>
+            <td><strong>Time-Series Store</strong></td>
+            <td>Aggregates historical sensor data for dashboards</td>
+            <td><span class="chip">ThingsBoard</span></td>
+            <td>Telemetry + device attributes</td>
+          </tr>
+          <tr>
+            <td><strong>Weather API</strong></td>
+            <td>Provides rain forecast for weather-aware irrigation skip</td>
+            <td><span class="chip">OpenWeatherMap</span></td>
+            <td>Precipitation probability, forecast</td>
+          </tr>
+          <tr>
+            <td><strong>Coordination Engine</strong></td>
+            <td>Runs the State Machine; publishes actuator commands</td>
+            <td><span class="chip">Cloud Functions</span></td>
+            <td>MQTT command topics</td>
+          </tr>
+          <tr>
+            <td><strong>Push Notifications</strong></td>
+            <td>Delivers pest alerts and system alerts to mobile app</td>
+            <td><span class="chip">Firebase FCM</span></td>
+            <td>Alert payloads</td>
+          </tr>
+          <tr>
+            <td><strong>Authentication</strong></td>
+            <td>Secures mobile app access to device controls</td>
+            <td><span class="chip">Firebase Auth</span></td>
+            <td>JWT tokens</td>
+          </tr>
+          <tr>
+            <td><strong>GDD &amp; FAO-56 DB</strong></td>
+            <td>Stores crop Kc tables and pest GDD thresholds by species</td>
+            <td><span class="chip">Firestore</span></td>
+            <td>Crop stage config, GDD models</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <footer><p>Cloud &amp; Intelligence · <a href="index.html" style="color:var(--accent3);text-decoration:none;">← Back to Hub</a></p></footer>
+</body>
+</html>

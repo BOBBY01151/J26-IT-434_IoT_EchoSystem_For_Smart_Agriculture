@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Data Flow Diagram — J26-IT-434 Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#07100d;--accent:#38bdf8;--accent3:#7dd3fc;--card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.08);--text:#e2f7ff;--muted:#6faabf;--radius:16px;--shadow:0 8px 40px rgba(0,0,0,0.55);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    .orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;opacity:.14;animation:drift 20s ease-in-out infinite alternate;}
+    .o1{width:450px;height:450px;background:#38bdf8;top:-100px;right:-80px;}
+    .o2{width:320px;height:320px;background:#22c55e;bottom:10%;left:-60px;animation-delay:-9s;}
+    @keyframes drift{from{transform:translateY(0);}to{transform:translateY(38px);}}
+    nav{position:sticky;top:0;z-index:100;background:rgba(7,16,13,.85);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:58px;}
+    .nav-brand{font-weight:700;font-size:.9rem;color:var(--accent3);display:flex;align-items:center;gap:8px;}
+    .nav-links{display:flex;align-items:center;gap:20px;}
+    .nav-links a{font-size:.8rem;color:rgba(255,255,255,.45);text-decoration:none;transition:color .2s;}
+    .nav-links a:hover,.nav-links a.active{color:var(--accent3);}
+    main{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:0 24px 80px;}
+    .hero{text-align:center;padding:64px 20px 48px;}
+    .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--accent3);font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:6px 16px;border-radius:100px;margin-bottom:22px;}
+    h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:800;line-height:1.15;background:linear-gradient(135deg,#7dd3fc,#38bdf8 50%,#22c55e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:14px;}
+    .sub{font-size:.95rem;color:var(--muted);max-width:600px;margin:0 auto;line-height:1.7;}
+    section{margin-bottom:64px;}
+    .sec-label{display:flex;align-items:center;gap:10px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+    .sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
+    .sec-title{font-size:1.5rem;font-weight:700;margin-bottom:6px;}
+    .sec-desc{color:var(--muted);font-size:.9rem;margin-bottom:28px;line-height:1.65;}
+
+    /* Flow pipeline */
+    .pipeline{display:flex;flex-direction:column;gap:0;align-items:stretch;}
+    .pipe-node{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;backdrop-filter:blur(12px);display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:18px;transition:transform .2s,box-shadow .2s,border-color .2s;}
+    .pipe-node:hover{transform:scale(1.012);box-shadow:var(--shadow);border-color:var(--nc,var(--accent));}
+    .pipe-node .pico{font-size:2rem;text-align:center;}
+    .pipe-node h3{font-size:.95rem;font-weight:700;margin-bottom:4px;}
+    .pipe-node p{font-size:.8rem;color:var(--muted);line-height:1.55;}
+    .pipe-node .proto{font-family:'Fira Code',monospace;font-size:.72rem;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);color:var(--accent3);padding:4px 10px;border-radius:100px;white-space:nowrap;}
+    .pipe-arrow{display:flex;flex-direction:column;align-items:center;padding:6px 0;gap:2px;}
+    .pipe-arrow .line{width:2px;height:22px;background:linear-gradient(to bottom,var(--accent),transparent);}
+    .pipe-arrow .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:blink 1.5s ease-in-out infinite;}
+    @keyframes blink{0%,100%{opacity:.4;}50%{opacity:1;}}
+
+    /* Decision table */
+    .dtable{width:100%;border-collapse:collapse;font-size:.84rem;}
+    .dtable th{text-align:left;padding:10px 14px;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);}
+    .dtable td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;}
+    .dtable tr:last-child td{border-bottom:none;}
+    .dtable tr:hover td{background:rgba(255,255,255,.02);}
+    .status{display:inline-block;padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:600;}
+    .s-act{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3);}
+    .s-block{background:rgba(248,113,113,.15);color:#f87171;border:1px solid rgba(248,113,113,.3);}
+    .s-skip{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.3);}
+
+    footer{text-align:center;padding:36px 20px;border-top:1px solid var(--border);color:var(--muted);font-size:.78rem;position:relative;z-index:1;}
+  </style>
+</head>
+<body>
+  <div class="orb o1" aria-hidden="true"></div>
+  <div class="orb o2" aria-hidden="true"></div>
+
+  <nav>
+    <div class="nav-brand">🌱 IoT Smart Agriculture <span style="font-size:.75rem;color:rgba(255,255,255,.4);font-weight:400;margin-left:6px;">/ Data Flow</span></div>
+    <div class="nav-links">
+      <a href="index.html">Hub</a>
+      <a href="system-overview.html">Overview</a>
+      <a href="data-flow.html" class="active">Data Flow</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="cloud-intelligence.html">Cloud &amp; AI</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <div class="badge">🔄 View 02 · Data Flow Diagram</div>
+      <h1>End-to-End Data Journey</h1>
+      <p class="sub">How sensor readings travel from the field through the network, get processed by the cloud intelligence engine, and trigger actuator responses — the full closed loop.</p>
+    </div>
+
+    <!-- Pipeline -->
+    <section>
+      <div class="sec-label">📡 Data Pipeline</div>
+      <h2 class="sec-title">Sensor → Cloud → Actuator Flow</h2>
+      <p class="sec-desc">Every measurement follows this path through the system in near-real-time.</p>
+
+      <div class="pipeline">
+
+        <div class="pipe-node" style="--nc:#22c55e;">
+          <div class="pico">🌱</div>
+          <div>
+            <h3>Field Sensors (Perception Layer)</h3>
+            <p>ESP32 samples soil moisture, EC, temperature, humidity, and liquid flow every 60s. Readings are timestamped and buffered locally.</p>
+          </div>
+          <span class="proto">ESP32 ADC</span>
+        </div>
+
+        <div class="pipe-arrow"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+        <div class="pipe-node" style="--nc:#38bdf8;">
+          <div class="pico">📶</div>
+          <div>
+            <h3>Network Transmission</h3>
+            <p>Data is published as a JSON payload via MQTT over TLS to the cloud broker. LoRaWAN is used for remote nodes beyond Wi-Fi range.</p>
+          </div>
+          <span class="proto">MQTT / LoRaWAN</span>
+        </div>
+
+        <div class="pipe-arrow"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+        <div class="pipe-node" style="--nc:#a78bfa;">
+          <div class="pico">☁️</div>
+          <div>
+            <h3>Cloud Ingestion &amp; Storage</h3>
+            <p>Firebase Realtime DB persists telemetry. ThingsBoard aggregates time-series data and serves the dashboard API for the mobile app.</p>
+          </div>
+          <span class="proto">Firebase / TSDB</span>
+        </div>
+
+        <div class="pipe-arrow"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+        <div class="pipe-node" style="--nc:#fbbf24;">
+          <div class="pico">🧠</div>
+          <div>
+            <h3>Central Coordination Engine</h3>
+            <p>The State Machine evaluates all incoming sensor data against FAO-56 targets, GDD thresholds, and interlock conditions to compute the required action.</p>
+          </div>
+          <span class="proto">State Machine</span>
+        </div>
+
+        <div class="pipe-arrow"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+        <div class="pipe-node" style="--nc:#f87171;">
+          <div class="pico">📋</div>
+          <div>
+            <h3>Command Dispatch</h3>
+            <p>Actuator commands (irrigate / fertilize / spray / skip) are published back to the field via MQTT. The mobile app receives push alerts simultaneously.</p>
+          </div>
+          <span class="proto">MQTT Publish</span>
+        </div>
+
+        <div class="pipe-arrow"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+        <div class="pipe-node" style="--nc:#22c55e;">
+          <div class="pico">⚙️</div>
+          <div>
+            <h3>Actuator Execution (Perception Layer)</h3>
+            <p>ESP32 receives the command and toggles solid-state relays to open/close irrigation valves, fertigation pumps, or spray nozzles. Flow meters confirm execution.</p>
+          </div>
+          <span class="proto">SSR / Relay</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Decision Logic -->
+    <section>
+      <div class="sec-label">🧠 Decision Logic</div>
+      <h2 class="sec-title">State Machine Decision Table</h2>
+      <p class="sec-desc">How the Coordination Engine decides which action to take for each sensor reading combination.</p>
+
+      <table class="dtable">
+        <thead>
+          <tr>
+            <th>Sensor Condition</th>
+            <th>System State</th>
+            <th>Engine Decision</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Soil moisture &lt; ETo target</td>
+            <td>No active interlock</td>
+            <td>Irrigation needed</td>
+            <td><span class="status s-act">✅ Irrigate</span></td>
+          </tr>
+          <tr>
+            <td>Soil moisture &lt; ETo target</td>
+            <td>Spray interlock active (within 24h)</td>
+            <td>Blocked by interlock</td>
+            <td><span class="status s-block">🚫 Skip — Interlock</span></td>
+          </tr>
+          <tr>
+            <td>Any soil moisture</td>
+            <td>Rain forecast next 12h</td>
+            <td>Weather API skip triggered</td>
+            <td><span class="status s-skip">🌧️ Skip — Rain</span></td>
+          </tr>
+          <tr>
+            <td>EC below target threshold</td>
+            <td>Moisture tension optimal</td>
+            <td>Fertigation needed</td>
+            <td><span class="status s-act">✅ Fertilize</span></td>
+          </tr>
+          <tr>
+            <td>EC below target threshold</td>
+            <td>Soil moisture near saturation</td>
+            <td>Leaching risk detected</td>
+            <td><span class="status s-block">🚫 Skip — Leaching</span></td>
+          </tr>
+          <tr>
+            <td>GDD accumulation ≥ threshold</td>
+            <td>No recent spray (>7 days)</td>
+            <td>Pest emergence forecast</td>
+            <td><span class="status s-skip">⚠️ Alert + Schedule Spray</span></td>
+          </tr>
+          <tr>
+            <td>All parameters nominal</td>
+            <td>All clear</td>
+            <td>No action required</td>
+            <td><span class="status s-act">✅ Monitor Only</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <footer><p>Data Flow Diagram · <a href="index.html" style="color:var(--accent3);text-decoration:none;">← Back to Hub</a></p></footer>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>System Overview — J26-IT-434 Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#07100d;--accent:#22c55e;--accent3:#4ade80;--card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.08);--text:#e2ffe9;--muted:#7fad8c;--radius:16px;--shadow:0 8px 40px rgba(0,0,0,0.55);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    .orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;opacity:.15;animation:drift 20s ease-in-out infinite alternate;}
+    .o1{width:480px;height:480px;background:#22c55e;top:-100px;left:-80px;}
+    .o2{width:360px;height:360px;background:#38bdf8;bottom:5%;right:-60px;animation-delay:-8s;}
+    @keyframes drift{from{transform:translateY(0);}to{transform:translateY(35px);}}
+    nav{position:sticky;top:0;z-index:100;background:rgba(7,16,13,.85);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:58px;}
+    .nav-brand{font-weight:700;font-size:.9rem;color:var(--accent3);display:flex;align-items:center;gap:8px;}
+    .nav-links{display:flex;align-items:center;gap:20px;}
+    .nav-links a{font-size:.8rem;color:var(--muted);text-decoration:none;transition:color .2s;}
+    .nav-links a:hover,.nav-links a.active{color:var(--accent3);}
+    main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px 80px;}
+    .hero{text-align:center;padding:64px 20px 48px;}
+    .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--accent3);font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:6px 16px;border-radius:100px;margin-bottom:22px;}
+    h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:800;line-height:1.15;background:linear-gradient(135deg,#4ade80,#22c55e 50%,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:14px;}
+    .sub{font-size:.95rem;color:var(--muted);max-width:600px;margin:0 auto;line-height:1.7;}
+    section{margin-bottom:68px;}
+    .sec-label{display:flex;align-items:center;gap:10px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+    .sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
+    .sec-title{font-size:1.55rem;font-weight:700;margin-bottom:6px;}
+    .sec-desc{color:var(--muted);font-size:.9rem;margin-bottom:28px;line-height:1.65;}
+
+    /* Stats row */
+    .stats{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin:40px 0;}
+    .stat{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:11px 22px;display:flex;align-items:center;gap:9px;font-size:.86rem;font-weight:500;backdrop-filter:blur(10px);transition:transform .2s,border-color .2s;}
+    .stat:hover{transform:translateY(-3px);border-color:var(--accent);}
+    .stat .v{font-weight:700;font-size:1rem;color:var(--accent3);}
+
+    /* Arch layers */
+    .arch-stack{display:flex;flex-direction:column;}
+    .layer{display:grid;grid-template-columns:190px 1fr;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);background:var(--card);backdrop-filter:blur(12px);transition:transform .25s,box-shadow .25s;margin-bottom:4px;}
+    .layer:hover{transform:translateX(7px);box-shadow:var(--shadow);}
+    .layer-id{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:22px 18px;color:#fff;font-weight:700;font-size:.82rem;gap:5px;}
+    .layer-id .n{font-family:'Fira Code',monospace;font-size:.68rem;opacity:.65;font-weight:400;}
+    .layer-id .ico{font-size:1.7rem;margin-bottom:3px;}
+    .layer-body{padding:18px 22px;border-left:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;justify-content:center;}
+    .layer-body h3{font-size:.95rem;font-weight:600;margin-bottom:6px;}
+    .layer-body p{font-size:.82rem;color:var(--muted);line-height:1.6;}
+    .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
+    .tag{font-size:.7rem;font-family:'Fira Code',monospace;padding:3px 9px;border-radius:100px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#bbb;}
+    .arrow{text-align:center;color:var(--accent);font-size:1.4rem;opacity:.6;padding:3px 0;animation:pa 2s ease-in-out infinite;}
+    @keyframes pa{0%,100%{opacity:.4;transform:translateY(0);}50%{opacity:.9;transform:translateY(3px);}}
+    .l1 .layer-id{background:linear-gradient(135deg,#1a4731,#0f3d24);}
+    .l2 .layer-id{background:linear-gradient(135deg,#1a3a4f,#0d2d42);}
+    .l3 .layer-id{background:linear-gradient(135deg,#3b1f7a,#2d1660);}
+    .l4 .layer-id{background:linear-gradient(135deg,#6b2d12,#5a2510);}
+
+    /* Innovation cards */
+    .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px 22px;backdrop-filter:blur(12px);transition:transform .25s,box-shadow .25s,border-color .25s;position:relative;overflow:hidden;}
+    .card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--c,#22c55e),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none;}
+    .card:hover{transform:translateY(-6px);box-shadow:var(--shadow);border-color:var(--c,var(--accent));}
+    .card:hover::before{opacity:.06;}
+    .card-ico{font-size:2.1rem;margin-bottom:12px;}
+    .card-title{font-size:.95rem;font-weight:700;margin-bottom:7px;}
+    .card-desc{font-size:.82rem;color:var(--muted);line-height:1.6;}
+    .card-code{margin-top:12px;font-size:.75rem;font-family:'Fira Code',monospace;padding:7px 11px;background:rgba(0,0,0,.3);border-radius:7px;border-left:3px solid var(--c,var(--accent));color:#aaa;}
+
+    /* Interlock */
+    .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;}
+    .icard{display:flex;gap:13px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;backdrop-filter:blur(10px);transition:border-color .25s,transform .25s;}
+    .icard:hover{border-color:var(--accent);transform:translateY(-4px);}
+    .iico{font-size:1.9rem;flex-shrink:0;}
+    .icard h4{font-size:.88rem;font-weight:700;margin-bottom:4px;color:var(--accent3);}
+    .icard p{font-size:.8rem;color:var(--muted);line-height:1.5;}
+
+    /* Impact */
+    .bars{display:flex;flex-direction:column;gap:16px;}
+    .bar-row label{display:flex;justify-content:space-between;font-size:.85rem;font-weight:600;margin-bottom:6px;}
+    .bar-row label span{color:var(--muted);font-weight:400;font-size:.8rem;}
+    .bar-bg{height:9px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden;}
+    .bar-fill{height:100%;border-radius:100px;animation:grow 1.4s cubic-bezier(.23,1,.32,1) forwards;width:0%;}
+    @keyframes grow{to{width:var(--w);}}
+
+    /* Team */
+    .tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;}
+    .tcard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px 20px;backdrop-filter:blur(12px);text-align:center;transition:transform .25s,border-color .25s;}
+    .tcard:hover{transform:translateY(-5px);border-color:var(--tc,var(--accent));}
+    .tav{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 12px;background:var(--tcbg,rgba(34,197,94,.12));border:2px solid var(--tc,var(--accent));}
+    .trole{font-size:.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tc,var(--accent));margin-bottom:5px;}
+    .tname{font-size:.95rem;font-weight:700;margin-bottom:8px;}
+    .tdesc{font-size:.78rem;color:var(--muted);line-height:1.6;}
+
+    footer{text-align:center;padding:36px 20px;border-top:1px solid var(--border);color:var(--muted);font-size:.78rem;position:relative;z-index:1;}
+    footer strong{color:var(--accent3);}
+    @media(max-width:600px){.layer{grid-template-columns:1fr;}.layer-body{border-left:none;border-top:1px solid rgba(255,255,255,.06);}}
+  </style>
+</head>
+<body>
+  <div class="orb o1" aria-hidden="true"></div>
+  <div class="orb o2" aria-hidden="true"></div>
+
+  <nav>
+    <div class="nav-brand">🌱 IoT Smart Agriculture <span style="font-size:.75rem;color:var(--muted);font-weight:400;margin-left:6px;">/ System Overview</span></div>
+    <div class="nav-links">
+      <a href="index.html">Hub</a>
+      <a href="system-overview.html" class="active">Overview</a>
+      <a href="data-flow.html">Data Flow</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="cloud-intelligence.html">Cloud & AI</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <div class="badge">🗺️ View 01 · System Overview</div>
+      <h1>4-Layer System Architecture</h1>
+      <p class="sub">The complete closed-loop IoT stack — from field-level perception to cloud intelligence and mobile control.</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat">💧 Water Saved <span class="v">20–40%</span></div>
+      <div class="stat">🌿 Fertilizer Waste <span class="v">−15%</span></div>
+      <div class="stat">🐛 Chemicals <span class="v">−67%</span></div>
+      <div class="stat">📡 Forecast <span class="v">7 Days</span></div>
+    </div>
+
+    <!-- Architecture Stack -->
+    <section>
+      <div class="sec-label">🏗️ Architecture Layers</div>
+      <h2 class="sec-title">Interconnected 4-Layer Stack</h2>
+      <p class="sec-desc">Each layer is independently deployable yet tightly coupled into a single closed-loop feedback system.</p>
+      <div class="arch-stack">
+        <div class="layer l1">
+          <div class="layer-id"><div class="ico">📡</div><span class="n">Layer 01</span>Perception</div>
+          <div class="layer-body">
+            <h3>Hardware &amp; Local Sensing</h3>
+            <p>ESP32 microcontrollers read capacitive soil moisture, EC, DHT22 temperature/humidity, and flow rates. Solid-state relays actuate pumps and valves.</p>
+            <div class="tags"><span class="tag">ESP32</span><span class="tag">Soil Moisture</span><span class="tag">EC Sensor</span><span class="tag">DHT22</span><span class="tag">Flow Meter</span><span class="tag">SSR</span></div>
+          </div>
+        </div>
+        <div class="arrow">⬇</div>
+        <div class="layer l2">
+          <div class="layer-id"><div class="ico">📶</div><span class="n">Layer 02</span>Network</div>
+          <div class="layer-body">
+            <h3>Communication &amp; Telemetry</h3>
+            <p>LoRaWAN for long-range low-power field telemetry; MQTT over TLS for real-time, secure cloud messaging. Edge buffers data during outages.</p>
+            <div class="tags"><span class="tag">LoRaWAN</span><span class="tag">MQTT/TLS</span><span class="tag">Wi-Fi</span><span class="tag">Edge Buffer</span></div>
+          </div>
+        </div>
+        <div class="arrow">⬇</div>
+        <div class="layer l3">
+          <div class="layer-id"><div class="ico">☁️</div><span class="n">Layer 03</span>Cloud &amp; AI</div>
+          <div class="layer-body">
+            <h3>Backend, AI &amp; Coordination Engine</h3>
+            <p>Firebase / ThingsBoard backend hosts the Central Coordination Engine, FAO-56 ETo algorithm, GDD pest models, and Weather API integration.</p>
+            <div class="tags"><span class="tag">Firebase</span><span class="tag">FAO-56</span><span class="tag">GDD Model</span><span class="tag">Weather API</span><span class="tag">State Machine</span></div>
+          </div>
+        </div>
+        <div class="arrow">⬇</div>
+        <div class="layer l4">
+          <div class="layer-id"><div class="ico">📱</div><span class="n">Layer 04</span>Application</div>
+          <div class="layer-body">
+            <h3>Mobile Dashboard &amp; Control</h3>
+            <p>Cross-platform mobile app with real-time charts, crop-stage input, manual override controls, and full offline-first sync capability.</p>
+            <div class="tags"><span class="tag">Cross-Platform</span><span class="tag">Real-Time</span><span class="tag">Offline-First</span><span class="tag">Push Alerts</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Innovations -->
+    <section>
+      <div class="sec-label">💡 Core Innovations</div>
+      <h2 class="sec-title">4 Novel Technical Contributions</h2>
+      <p class="sec-desc">Each innovation addresses a specific gap in existing smart farming systems.</p>
+      <div class="grid4">
+        <div class="card" style="--c:#22c55e;"><div class="card-ico">💧</div><div class="card-title">Dynamic Crop-Stage Irrigation</div><div class="card-desc">FAO-56 evapotranspiration model with weather API rain-skips. Adjusts targets per crop growth stage.</div><div class="card-code">ETo × Kc(stage) → target</div></div>
+        <div class="card" style="--c:#fbbf24;"><div class="card-ico">🧪</div><div class="card-title">Dynamic Fertigation Syncing</div><div class="card-desc">Real-time EC &amp; moisture tension feedback controls nutrient dispensing. Prevents leaching.</div><div class="card-code">EC(soil) + θ → dose</div></div>
+        <div class="card" style="--c:#f87171;"><div class="card-ico">🐛</div><div class="card-title">Predictive Pest Forecasting</div><div class="card-desc">GDD accumulation from DHT22 microclimate data. 7-day pest emergence forecast.</div><div class="card-code">∑GDD → D+7 forecast</div></div>
+        <div class="card" style="--c:#a78bfa;"><div class="card-ico">🔄</div><div class="card-title">Multi-Agent Closed Loop</div><div class="card-desc">Central Coordination Engine enforces fail-safe interlocks between all subsystems.</div><div class="card-code">State Machine → interlocks</div></div>
+      </div>
+    </section>
+
+    <!-- Interlocks -->
+    <section>
+      <div class="sec-label">🔒 Closed-Loop Rules</div>
+      <h2 class="sec-title">Conflict Prevention Interlocks</h2>
+      <p class="sec-desc">Zero-conflict operation enforced by the System State Machine automatically.</p>
+      <div class="grid3">
+        <div class="icard"><div class="iico">🚫</div><div><h4>Spray–Irrigation Lock</h4><p>Irrigation blocked for <strong>24 hours</strong> after pest control spray.</p></div></div>
+        <div class="icard"><div class="iico">💦</div><div><h4>Leaching Avoidance</h4><p>Fertilization postponed when soil moisture is near <strong>saturation</strong>.</p></div></div>
+        <div class="icard"><div class="iico">🌧️</div><div><h4>Weather-Aware Skip</h4><p>Irrigation paused when <strong>rain is forecast</strong> via Weather API.</p></div></div>
+      </div>
+    </section>
+
+    <!-- Impact -->
+    <section>
+      <div class="sec-label">📊 Expected Impact</div>
+      <h2 class="sec-title">Projected Improvements</h2>
+      <div class="bars">
+        <div class="bar-row"><label>💧 Water Conservation <span>20–40% reduction</span></label><div class="bar-bg"><div class="bar-fill" style="--w:40%;background:linear-gradient(90deg,#22c55e,#4ade80);"></div></div></div>
+        <div class="bar-row"><label>🌿 Fertilizer Runoff <span>10–15% reduction</span></label><div class="bar-bg"><div class="bar-fill" style="--w:15%;background:linear-gradient(90deg,#fbbf24,#fde68a);"></div></div></div>
+        <div class="bar-row"><label>🐛 Chemical Use <span>Up to 67% fewer applications</span></label><div class="bar-bg"><div class="bar-fill" style="--w:67%;background:linear-gradient(90deg,#f87171,#fca5a5);"></div></div></div>
+        <div class="bar-row"><label>⚡ Reliability <span>Zero-conflict via interlocks</span></label><div class="bar-bg"><div class="bar-fill" style="--w:95%;background:linear-gradient(90deg,#a78bfa,#c4b5fd);"></div></div></div>
+      </div>
+    </section>
+
+    <!-- Team -->
+    <section>
+      <div class="sec-label">👥 Team</div>
+      <h2 class="sec-title">Workload Distribution</h2>
+      <div class="tgrid">
+        <div class="tcard" style="--tc:#22c55e;--tcbg:rgba(34,197,94,.12);"><div class="tav">🔧</div><div class="trole">Hardware Specialist</div><div class="tname">Member 1</div><div class="tdesc">Sensor integration, actuator wiring, relay control, field calibration.</div></div>
+        <div class="tcard" style="--tc:#38bdf8;--tcbg:rgba(56,189,248,.12);"><div class="tav">🌐</div><div class="trole">Network &amp; Cloud</div><div class="tname">Member 2</div><div class="tdesc">LoRaWAN/MQTT setup, cloud DB architecture, API development.</div></div>
+        <div class="tcard" style="--tc:#f87171;--tcbg:rgba(248,113,113,.12);"><div class="tav">📱</div><div class="trole">Mobile &amp; UX</div><div class="tname">Member 3</div><div class="tdesc">Cross-platform dashboard, agricultural UX, offline-first sync.</div></div>
+        <div class="tcard" style="--tc:#a78bfa;--tcbg:rgba(167,139,250,.12);"><div class="tav">🤖</div><div class="trole">Intelligence Lead</div><div class="tname">Member 4</div><div class="tdesc">Coordination Engine, FAO-56 &amp; GDD algorithms, ML models.</div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer><p><strong>J26-IT-434</strong> · System Overview · <a href="index.html" style="color:var(--accent3);text-decoration:none;">← Back to Hub</a></p></footer>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hardware Layer — J26-IT-434 Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#07100d;--accent:#fbbf24;--accent3:#fde68a;--card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.08);--text:#fffbeb;--muted:#a08030;--radius:16px;--shadow:0 8px 40px rgba(0,0,0,0.55);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    .orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;opacity:.13;animation:drift 20s ease-in-out infinite alternate;}
+    .o1{width:420px;height:420px;background:#fbbf24;top:-80px;left:-60px;}
+    .o2{width:300px;height:300px;background:#22c55e;bottom:10%;right:-50px;animation-delay:-8s;}
+    @keyframes drift{from{transform:translateY(0);}to{transform:translateY(36px);}}
+    nav{position:sticky;top:0;z-index:100;background:rgba(7,16,13,.85);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:58px;}
+    .nav-brand{font-weight:700;font-size:.9rem;color:var(--accent3);}
+    .nav-links{display:flex;align-items:center;gap:20px;}
+    .nav-links a{font-size:.8rem;color:rgba(255,255,255,.45);text-decoration:none;transition:color .2s;}
+    .nav-links a:hover,.nav-links a.active{color:var(--accent3);}
+    main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px 80px;}
+    .hero{text-align:center;padding:64px 20px 48px;}
+    .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:var(--accent3);font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:6px 16px;border-radius:100px;margin-bottom:22px;}
+    h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:800;line-height:1.15;background:linear-gradient(135deg,#fde68a,#fbbf24 50%,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:14px;}
+    .sub{font-size:.95rem;color:var(--muted);max-width:600px;margin:0 auto;line-height:1.7;}
+    section{margin-bottom:64px;}
+    .sec-label{display:flex;align-items:center;gap:10px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+    .sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
+    .sec-title{font-size:1.5rem;font-weight:700;margin-bottom:6px;}
+    .sec-desc{color:var(--muted);font-size:.9rem;margin-bottom:28px;line-height:1.65;}
+
+    /* Component cards */
+    .comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;}
+    .comp{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px 22px;backdrop-filter:blur(12px);transition:transform .25s,box-shadow .25s,border-color .25s;}
+    .comp:hover{transform:translateY(-5px);box-shadow:var(--shadow);border-color:var(--accent);}
+    .comp-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+    .comp-ico{font-size:2rem;}
+    .comp-name{font-size:1rem;font-weight:700;}
+    .comp-model{font-family:'Fira Code',monospace;font-size:.72rem;color:var(--accent3);background:rgba(251,191,36,.1);padding:2px 8px;border-radius:100px;border:1px solid rgba(251,191,36,.25);}
+    .comp-desc{font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:12px;}
+    .spec-list{list-style:none;display:flex;flex-direction:column;gap:5px;}
+    .spec-list li{font-size:.78rem;display:flex;gap:8px;align-items:baseline;}
+    .spec-list li::before{content:'▸';color:var(--accent);font-size:.65rem;flex-shrink:0;}
+
+    /* Wiring topology */
+    .topo{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;backdrop-filter:blur(12px);font-family:'Fira Code',monospace;font-size:.8rem;line-height:1.9;overflow-x:auto;}
+    .topo .k{color:var(--accent3);}
+    .topo .v{color:#aaa;}
+    .topo .c{color:#4ade80;}
+    .topo .s{color:#f87171;}
+
+    footer{text-align:center;padding:36px 20px;border-top:1px solid var(--border);color:var(--muted);font-size:.78rem;position:relative;z-index:1;}
+  </style>
+</head>
+<body>
+  <div class="orb o1" aria-hidden="true"></div>
+  <div class="orb o2" aria-hidden="true"></div>
+
+  <nav>
+    <div class="nav-brand">🌱 IoT Smart Agriculture <span style="font-size:.75rem;color:rgba(255,255,255,.4);font-weight:400;margin-left:6px;">/ Hardware Layer</span></div>
+    <div class="nav-links">
+      <a href="index.html">Hub</a>
+      <a href="system-overview.html">Overview</a>
+      <a href="data-flow.html">Data Flow</a>
+      <a href="hardware.html" class="active">Hardware</a>
+      <a href="cloud-intelligence.html">Cloud &amp; AI</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <div class="badge">🔧 View 03 · Hardware Layer</div>
+      <h1>Perception Layer Components</h1>
+      <p class="sub">Detailed breakdown of every physical component deployed in the field — from microcontrollers and sensors to actuators and power management.</p>
+    </div>
+
+    <!-- Components -->
+    <section>
+      <div class="sec-label">🔌 Hardware Components</div>
+      <h2 class="sec-title">Field Device Inventory</h2>
+      <p class="sec-desc">All components selected for low cost, high reliability, and agricultural environment resilience.</p>
+
+      <div class="comp-grid">
+
+        <div class="comp">
+          <div class="comp-head">
+            <div class="comp-ico">🖥️</div>
+            <div>
+              <div class="comp-name">Microcontroller</div>
+              <span class="comp-model">ESP32-WROOM-32</span>
+            </div>
+          </div>
+          <p class="comp-desc">Dual-core 240 MHz processor with built-in Wi-Fi and Bluetooth. Handles sensor polling, local logic, and MQTT/LoRa communication.</p>
+          <ul class="spec-list">
+            <li>Dual-core Xtensa LX6 @ 240 MHz</li>
+            <li>520 KB SRAM, 4 MB Flash</li>
+            <li>Wi-Fi 802.11 b/g/n + BT 4.2</li>
+            <li>34 programmable GPIO pins</li>
+            <li>12-bit ADC × 18 channels</li>
+          </ul>
+        </div>
+
+        <div class="comp">
+          <div class="comp-head">
+            <div class="comp-ico">💧</div>
+            <div>
+              <div class="comp-name">Soil Moisture</div>
+              <span class="comp-model">Capacitive v1.2</span>
+            </div>
+          </div>
+          <p class="comp-desc">Capacitive design avoids electrolysis corrosion. Measures volumetric water content (VWC) via dielectric permittivity of soil.</p>
+          <ul class="spec-list">
+            <li>Operating voltage: 3.3 – 5.5 V</li>
+            <li>Output: 0 – 3.0 V analog</li>
+            <li>No corrosion (no exposed metal)</li>
+            <li>Accuracy: ±2% VWC typical</li>
+          </ul>
+        </div>
+
+        <div class="comp">
+          <div class="comp-head">
+            <div class="comp-ico">⚗️</div>
+            <div>
+              <div class="comp-name">EC Sensor</div>
+              <span class="comp-model">DFRobot SEN0244</span>
+            </div>
+          </div>
+          <p class="comp-desc">Measures electrical conductivity of soil solution to assess nutrient concentration and trigger fertigation dosing decisions.</p>
+          <ul class="spec-list">
+            <li>Range: 0 – 20 mS/cm</li>
+            <li>Resolution: 0.01 mS/cm</li>
+            <li>Operating temp: 5 – 40°C</li>
+            <li>Analog voltage output</li>
+          </ul>
+        </div>
+
+        <div class="comp">
+          <div class="comp-head">
+            <div class="comp-ico">🌡️</div>
+            <div>
+              <div class="comp-name">Temp &amp; Humidity</div>
+              <span class="comp-model">DHT22 / AM2302</span>
+            </div>
+          </div>
+          <p class="comp-desc">Captures microclimate data used to calculate Growing Degree Days (GDD) for the pest forecasting model.</p>
+          <ul class="spec-list">
+            <li>Temp range: −40 to +80°C (±0.5°C)</li>
+            <li>Humidity: 0–100% RH (±2–5%)</li>
+            <li>Single-wire digital protocol</li>
+            <li>2-second sampling interval</li>
+          </ul>
+        </div>
+
+        <div class="comp">
+          <div class="comp-head">
+            <div class="comp-ico">🌊</div>
+            <div>
+              <div class="comp-name">Flow Meter</div>
+              <span class="comp-model">YF-S201 Hall-Effect</span>
+            </div>
+          </div>
+          <p class="comp-desc">Tracks precise water volume delivered per irrigation event, enabling feedback verification of actuator commands.</p>
+          <ul class="spec-list">
+            <li>Flow range: 1 – 30 L/min</li>
+            <li>Pulse factor: 7.5 pulses/litre</li>
+            <li>Working pressure: ≤1.75 MPa</li>
+            <li>Hall-effect output (digital)</li>
+          </ul>
+        </div>
+
+        <div class="comp">
+          <div class="comp-head">
+            <div class="comp-ico">⚡</div>
+            <div>
+              <div class="comp-name">Solid-State Relay</div>
+              <span class="comp-model">SSR-25DA (25A/250V)</span>
+            </div>
+          </div>
+          <p class="comp-desc">Zero-crossing SSR switches irrigation valves, fertigation pumps, and spray nozzles. No mechanical wear, faster switching than electromechanical relays.</p>
+          <ul class="spec-list">
+            <li>Input: 3–32 V DC (ESP32 compatible)</li>
+            <li>Output: 24–380 V AC, 25A max</li>
+            <li>Zero-crossing switching</li>
+            <li>Optical isolation for safety</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Wiring topology -->
+    <section>
+      <div class="sec-label">🔌 Wiring Topology</div>
+      <h2 class="sec-title">ESP32 Pin Mapping</h2>
+      <p class="sec-desc">Reference wiring plan for each sensor and actuator to the ESP32 GPIO pins.</p>
+
+      <div class="topo">
+<span class="c">// ESP32 Field Node — Pin Assignment</span>
+
+<span class="k">SENSORS:</span>
+  <span class="v">GPIO 34</span>  →  <span class="k">Soil Moisture Sensor</span>   <span class="c">(Analog ADC1_CH6)</span>
+  <span class="v">GPIO 35</span>  →  <span class="k">EC Sensor</span>              <span class="c">(Analog ADC1_CH7)</span>
+  <span class="v">GPIO  4</span>  →  <span class="k">DHT22 Temp/Humidity</span>    <span class="c">(Digital one-wire)</span>
+  <span class="v">GPIO 18</span>  →  <span class="k">Flow Meter (Pulse)</span>     <span class="c">(Interrupt-driven counter)</span>
+
+<span class="k">ACTUATORS (via SSR):</span>
+  <span class="v">GPIO 25</span>  →  <span class="k">Irrigation Valve SSR</span>   <span class="c">(HIGH = open valve)</span>
+  <span class="v">GPIO 26</span>  →  <span class="k">Fertigation Pump SSR</span>   <span class="c">(HIGH = run pump)</span>
+  <span class="v">GPIO 27</span>  →  <span class="k">Spray Nozzle SSR</span>       <span class="c">(HIGH = spray)</span>
+
+<span class="k">COMMUNICATION:</span>
+  <span class="v">Built-in</span> →  <span class="k">Wi-Fi</span>                  <span class="c">(MQTT over TLS)</span>
+  <span class="v">GPIO 16</span>  →  <span class="k">LoRa TX (SX1276)</span>       <span class="c">(UART2)</span>
+  <span class="v">GPIO 17</span>  →  <span class="k">LoRa RX (SX1276)</span>       <span class="c">(UART2)</span>
+
+<span class="k">POWER:</span>
+  <span class="v">3.3 V</span>    →  <span class="k">Sensors (VCC rails)</span>
+  <span class="v">5.0 V</span>    →  <span class="k">SSR input signal (via level shifter)</span>
+  <span class="s">Note: SSR output switches mains AC — isolate carefully!</span>
+      </div>
+    </section>
+
+  </main>
+
+  <footer><p>Hardware Layer · <a href="index.html" style="color:var(--accent3);text-decoration:none;">← Back to Hub</a></p></footer>
+</body>
+</html>
