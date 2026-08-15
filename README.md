@@ -14,7 +14,7 @@
 
 <br/>
 
-> ### 🖥️ [View Interactive System Architecture →](./architecture.html)
+> ### 🖥️ [View Interactive System Architecture →](./system-architecture/architecture.html)
 > *Open `architecture.html` in your browser for a full visual walkthrough of the system design, layer breakdown, innovations, and team roles.*
 
 <br/>
@@ -40,7 +40,7 @@
 
 ## 🏗️ System Architecture
 
-> 📐 **[Open Full Interactive Architecture →](./architecture.html)**  
+> 📐 **[Open Full Interactive Architecture →](./system-architecture/architecture.html)**  
 > The interactive page includes color-coded layers, technology tags, and animated flow diagrams.
 
 The system is built on **four tightly integrated layers** forming a complete closed-loop feedback system:
@@ -186,8 +186,10 @@ A **Central Coordination Engine** maintains a System State Machine and enforces 
 ```
 J26-IT-434_IoT_EchoSystem_For_Smart_Agriculture/
 │
-├── 📄 README.md               ← Project documentation (this file)
-├── 🌐 architecture.html       ← Interactive system architecture visualization
+├── 📄 README.md                          ← Project documentation (this file)
+│
+├── 📂 system-architecture/               ← Architecture visualizations
+│   └── 🌐 architecture.html             ← Interactive system architecture page
 │
 └── ... (source code & research artifacts coming soon)
 ```
