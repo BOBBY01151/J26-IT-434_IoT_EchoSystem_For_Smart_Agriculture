@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "SmartFarm",
+    "slug": "smartfarm",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F6F8F5"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.smartfarm.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#F6F8F5"
+      },
+      "package": "com.smartfarm.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "SmartFarm needs access to your photos to analyze plant images.",
+          "cameraPermission": "SmartFarm needs access to your camera to capture plant images."
+        }
+      ],
+      "expo-asset"
+    ],
+    "scheme": "smartfarm",
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
