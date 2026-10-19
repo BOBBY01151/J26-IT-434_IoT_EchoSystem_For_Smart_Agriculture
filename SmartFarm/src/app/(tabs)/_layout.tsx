@@ -58,10 +58,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="plant-health"
         options={{
-          title: 'Plant Health',
+          title: 'Pest & Health',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? 'camera' : 'camera-outline'}
+              name={focused ? 'bug' : 'bug-outline'}
               size={22}
               color={color}
             />

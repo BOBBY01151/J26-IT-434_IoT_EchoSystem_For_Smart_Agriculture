@@ -72,22 +72,22 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* 6. Plant Health Quick Action Banner */}
+      {/* 6. Pest & Plant Health Quick Action Banner */}
       <View style={styles.section}>
         <TouchableOpacity
           style={styles.bannerCard}
           onPress={() => router.push('/(tabs)/plant-health')}
           activeOpacity={0.8}
           accessibilityRole="button"
-          accessibilityLabel="Inspect plant health"
+          accessibilityLabel="Inspect pest and plant health"
         >
           <View style={styles.bannerIconWrap}>
-            <Ionicons name="camera" size={24} color={Colors.primaryGreen} />
+            <Ionicons name="bug" size={24} color={Colors.primaryGreen} />
           </View>
           <View style={styles.bannerTextWrap}>
-            <Text style={styles.bannerTitle}>Inspect Plant Health</Text>
+            <Text style={styles.bannerTitle}>Edge AI Pest Prediction & Health</Text>
             <Text style={styles.bannerSubtitle}>
-              Capture or upload crop leaves for disease detection preview
+              Live ESP32 FNN risk inference, Anomaly Gatekeeper & 24h spray lock
             </Text>
           </View>
           <Ionicons name="arrow-forward" size={18} color={Colors.primaryGreen} />
