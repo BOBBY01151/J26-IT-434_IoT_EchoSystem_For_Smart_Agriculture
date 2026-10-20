@@ -1,5 +1,4 @@
-// Mock Backend Service for Closed-Loop IoT Ecosystem (J26-IT-434)
-// Simulates Edge AI DNN Irrigation Inference, K-Means Anomaly Detection, and MQTT Actuation
+
 
 export interface LiveSensorState {
   soilMoisture: number;          // %
