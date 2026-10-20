@@ -5,17 +5,33 @@ import {
   StyleSheet,
   Switch,
   TouchableOpacity,
+  Platform,
+  UIManager,
+  LayoutAnimation,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenContainer from '../../components/ScreenContainer';
 import StatusBadge from '../../components/StatusBadge';
+import CropGrowthTracker from '../../components/CropGrowthTracker';
 import { Colors, FontSize, FontWeight, Spacing, Radius, Shadow } from '../../constants/theme';
 import { mockFarm, mockGreenhouse, mockDevice } from '../../data/mockFarm';
 import { mockSensorReadings } from '../../data/mockSensors';
 
+// Enable LayoutAnimation on Android
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 export default function FarmScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [tempUnit, setTempUnit] = useState<'C' | 'F'>('C');
+  const [currentGrowthStage, setCurrentGrowthStage] = useState<string>(mockGreenhouse.growthStage);
+  const [isCropDetailsExpanded, setIsCropDetailsExpanded] = useState<boolean>(false);
+
+  const toggleCropDetails = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setIsCropDetailsExpanded((prev) => !prev);
+  };
 
   return (
     <ScreenContainer>
@@ -49,7 +65,7 @@ export default function FarmScreen() {
         </View>
       </View>
 
-      {/* 2. Greenhouse Information Section */}
+      {/* 2. Greenhouse Information & Crop Tracking Section */}
       <View style={styles.section}>
         <Text style={styles.sectionHeading}>Greenhouse Unit</Text>
         <View style={styles.card}>
@@ -58,17 +74,52 @@ export default function FarmScreen() {
             <Text style={styles.itemValue}>{mockGreenhouse.name}</Text>
           </View>
           <View style={styles.divider} />
-          <View style={styles.itemRow}>
-            <Text style={styles.itemLabel}>Crop Monitored</Text>
-            <Text style={styles.itemValue}>{mockGreenhouse.crop}</Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.itemRow}>
-            <Text style={styles.itemLabel}>Active Growth Stage</Text>
-            <View style={styles.stageBadge}>
-              <Text style={styles.stageBadgeText}>{mockGreenhouse.growthStage}</Text>
+
+          {/* Interactive Collapsible Header (Accordion Toggle) */}
+          <TouchableOpacity
+            style={styles.accordionToggleRow}
+            onPress={toggleCropDetails}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel="Toggle Crop Details and Growth Tracking"
+            accessibilityState={{ expanded: isCropDetailsExpanded }}
+          >
+            {/* Left Side: Standard structure matching other Greenhouse Unit items */}
+            <View style={styles.accordionLabelCol}>
+              <Text style={styles.itemLabel}>Crop Details & Growth Tracking</Text>
+              <Text style={styles.itemSublabel}>
+                Dynamic growth lifecycle & baseline input tracking
+              </Text>
             </View>
-          </View>
+
+            {/* Right Side: Crop Name, Active Stage Badge & Chevron */}
+            <View style={styles.accordionRight}>
+              <Text style={styles.cropValueText}>{mockGreenhouse.crop}</Text>
+              <View style={styles.stageBadge}>
+                <Text style={styles.stageBadgeText}>{currentGrowthStage}</Text>
+              </View>
+              <Ionicons
+                name={isCropDetailsExpanded ? 'chevron-up' : 'chevron-down'}
+                size={16}
+                color={Colors.secondaryText}
+              />
+            </View>
+          </TouchableOpacity>
+
+          {/* Expandable Content Area */}
+          {isCropDetailsExpanded && (
+            <View style={styles.accordionContentArea}>
+              <CropGrowthTracker
+                embedded
+                greenhouseName={mockGreenhouse.name}
+                cropName={mockGreenhouse.crop}
+                onStageChange={(_stageKey, stageLabel) => {
+                  setCurrentGrowthStage(stageLabel);
+                }}
+              />
+            </View>
+          )}
+
           <View style={styles.divider} />
           <View style={styles.itemRow}>
             <Text style={styles.itemLabel}>Zone Identifier</Text>
@@ -82,7 +133,7 @@ export default function FarmScreen() {
         </View>
       </View>
 
-      {/* 3. Edge Node Hardware Information */}
+      {/* 4. Edge Node Hardware Information */}
       <View style={styles.section}>
         <View style={styles.sectionHeaderRow}>
           <Text style={styles.sectionHeading}>Edge Hardware Node</Text>
@@ -287,6 +338,27 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 4,
   },
+  accordionToggleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: Spacing.md,
+  },
+  accordionLabelCol: {
+    flex: 1,
+    marginRight: Spacing.sm,
+  },
+  accordionRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    flexShrink: 0,
+  },
+  cropValueText: {
+    fontSize: FontSize.body,
+    fontWeight: FontWeight.medium,
+    color: Colors.mainText,
+  },
   stageBadge: {
     backgroundColor: Colors.lightGreen,
     paddingHorizontal: Spacing.sm + 2,
@@ -297,6 +369,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: FontWeight.bold,
     color: Colors.primaryGreen,
+  },
+  accordionContentArea: {
+    paddingBottom: Spacing.xs,
   },
   hardwareBadge: {
     flexDirection: 'row',

@@ -503,12 +503,12 @@ export default function PlantHealthScreen() {
       symptomObserved: selectedSymptom || 'None (Preventative Stage)',
       recommendedTreatments: chosenChemical
         ? [
-            {
-              chemical: chosenChemical.name,
-              dosage: `${chosenChemical.chemicalAmount} in ${chosenChemical.waterVolume} water`,
-              notes: chosenChemical.notes,
-            },
-          ]
+          {
+            chemical: chosenChemical.name,
+            dosage: `${chosenChemical.chemicalAmount} in ${chosenChemical.waterVolume} water`,
+            notes: chosenChemical.notes,
+          },
+        ]
         : [],
       photoAttached: !!imageUri,
       notes: inspectionNotes.trim() || 'No additional notes',
@@ -523,8 +523,7 @@ export default function PlantHealthScreen() {
 
     Alert.alert(
       'Observation Report Saved',
-      `Date: ${reportDateTime}\nPlants: ${plantCount}\nStage: ${
-        CROP_STAGES.find((s) => s.key === selectedCropStage)?.label
+      `Date: ${reportDateTime}\nPlants: ${plantCount}\nStage: ${CROP_STAGES.find((s) => s.key === selectedCropStage)?.label
       }\nSymptom: ${selectedSymptom || 'Normal'}\n\nPrescribed Treatment:\n${chemicalSummaryText}\n\nObservation appended to history successfully!`,
       [
         { text: 'View History', onPress: () => setHistoryModalVisible(true) },
@@ -1322,8 +1321,8 @@ export default function PlantHealthScreen() {
                 sortedReportHistory.map((item) => {
                   const hasChemicalTreatment = Boolean(
                     item.selectedChemical &&
-                      !item.selectedChemical.toLowerCase().includes('no spray') &&
-                      item.selectedChemical !== 'None'
+                    !item.selectedChemical.toLowerCase().includes('no spray') &&
+                    item.selectedChemical !== 'None'
                   );
 
                   return (
