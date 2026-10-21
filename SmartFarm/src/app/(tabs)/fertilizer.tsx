@@ -73,7 +73,10 @@ export default function FertilizerScreen() {
           <Text style={styles.pageTitle}>Fertilizer & Nutrients</Text>
           <Text style={styles.pageSubtitle}>Schedule reminders & crop stage tracking</Text>
         </View>
-        <StatusBadge label="Simulated" variant="muted" />
+        <View style={styles.mqttBadge}>
+          <View style={styles.mqttDot} />
+          <Text style={styles.mqttText}>MQTT: Online</Text>
+        </View>
       </View>
 
       {/* 1. Crop Stage & Sensor Status Panel */}
@@ -312,6 +315,28 @@ const styles = StyleSheet.create({
     fontSize: FontSize.body,
     color: Colors.secondaryText,
     marginTop: 2,
+  },
+  mqttBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#EAF7EE',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: Radius.pill,
+    borderWidth: 1,
+    borderColor: '#C3E8CC',
+  },
+  mqttDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: Colors.success,
+  },
+  mqttText: {
+    fontSize: 11,
+    fontWeight: FontWeight.semibold,
+    color: Colors.primaryGreen,
   },
   section: {
     marginBottom: Spacing.xl,
