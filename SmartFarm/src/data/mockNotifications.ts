@@ -3,6 +3,14 @@ import type { AppNotification } from '../types/notification';
 // Static demonstration notifications — no push infrastructure
 export const mockNotifications: AppNotification[] = [
   {
+    id: 'notif-crit-001',
+    title: 'Severe Pest Risk Alert',
+    body: 'Severe environmental pest risk detected. Action required.',
+    timestamp: 'Just now',
+    type: 'critical_alert',
+    read: false,
+  },
+  {
     id: 'notif-001',
     title: 'Sensor readings available',
     body: 'Latest environmental readings have been loaded for Tomato Greenhouse A. Review the dashboard for details.',

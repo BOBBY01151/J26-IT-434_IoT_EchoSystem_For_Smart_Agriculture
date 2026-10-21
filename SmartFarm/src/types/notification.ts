@@ -1,6 +1,6 @@
 // Notification types
 
-export type NotificationType = 'info' | 'warning' | 'success' | 'device';
+export type NotificationType = 'info' | 'warning' | 'success' | 'device' | 'critical_alert' | 'pest_alert';
 
 export interface AppNotification {
   id: string;

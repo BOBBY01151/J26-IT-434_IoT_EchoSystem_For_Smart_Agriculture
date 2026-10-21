@@ -19,6 +19,27 @@ export interface Greenhouse {
 
 export type GrowthStage = 'Seedling' | 'Vegetative' | 'Flowering' | 'Ripening' | 'Harvest';
 
+export type CropGrowthStageKey =
+  | 'seed'
+  | 'small_plants'
+  | 'big_plants'
+  | 'flowering'
+  | 'fruit_setting'
+  | 'harvest';
+
+export interface CropDetailsRecord {
+  greenhouseName: string;
+  cropName: string;
+  plantingDate: string; // YYYY-MM-DD
+  seedsPlanted: number;
+  soilFungicideApplied: boolean;
+  cropAgeDays: number;
+  cropAgeFormatted: string;
+  estimatedStage: CropGrowthStageKey;
+  actualStage: CropGrowthStageKey;
+  lastUpdated: string;
+}
+
 export interface DeviceInfo {
   id: string;
   name: string;
