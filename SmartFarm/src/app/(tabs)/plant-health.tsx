@@ -558,7 +558,10 @@ export default function PlantHealthScreen() {
           <Text style={styles.pageTitle}>Pest & Plant Health</Text>
           <Text style={styles.pageSubtitle}>Edge AI Prediction & Field Observation Reports</Text>
         </View>
-        <StatusBadge label="SIMULATED" variant="success" />
+        <View style={styles.mqttBadge}>
+          <View style={styles.mqttDot} />
+          <Text style={styles.mqttText}>MQTT: Online</Text>
+        </View>
       </View>
 
       {/* 2. Top Segmented Navigation Switcher */}
@@ -571,7 +574,7 @@ export default function PlantHealthScreen() {
           <Ionicons
             name="bug"
             size={16}
-            color={activeSegment === 'pest' ? Colors.primaryGreen : Colors.secondaryText}
+            color={activeSegment === 'pest' ? Colors.cardBackground : Colors.secondaryText}
           />
           <Text style={[styles.segmentText, activeSegment === 'pest' && styles.segmentTextActive]}>
             Edge AI Pest Control
@@ -586,7 +589,7 @@ export default function PlantHealthScreen() {
           <Ionicons
             name="document-text"
             size={16}
-            color={activeSegment === 'report' ? Colors.primaryGreen : Colors.secondaryText}
+            color={activeSegment === 'report' ? Colors.cardBackground : Colors.secondaryText}
           />
           <Text
             style={[styles.segmentText, activeSegment === 'report' && styles.segmentTextActive]}
@@ -1566,6 +1569,28 @@ const styles = StyleSheet.create({
     color: Colors.secondaryText,
     marginTop: 2,
   },
+  mqttBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#EAF7EE',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: Radius.pill,
+    borderWidth: 1,
+    borderColor: '#C3E8CC',
+  },
+  mqttDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: Colors.success,
+  },
+  mqttText: {
+    fontSize: 11,
+    fontWeight: FontWeight.semibold,
+    color: Colors.primaryGreen,
+  },
   segmentContainer: {
     flexDirection: 'row',
     backgroundColor: '#EBEFEB',
@@ -1579,20 +1604,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    paddingVertical: 10,
-    borderRadius: Radius.sm,
+    paddingVertical: 8,
+    borderRadius: Radius.sm + 2,
   },
   segmentBtnActive: {
-    backgroundColor: Colors.cardBackground,
+    backgroundColor: Colors.primaryGreen,
     ...Shadow.card,
   },
   segmentText: {
-    fontSize: 12,
+    fontSize: FontSize.secondary,
     fontWeight: FontWeight.medium,
     color: Colors.secondaryText,
   },
   segmentTextActive: {
-    color: Colors.primaryGreen,
+    color: Colors.cardBackground,
     fontWeight: FontWeight.bold,
   },
   tabContent: {

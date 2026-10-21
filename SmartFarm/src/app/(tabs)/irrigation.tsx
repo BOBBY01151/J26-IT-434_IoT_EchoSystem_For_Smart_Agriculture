@@ -274,8 +274,8 @@ export default function IrrigationScreen() {
       {/* 1. HEADER & SYSTEM STATUS */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.pageTitle}>AgriAgent IoT</Text>
-          <Text style={styles.pageSubtitle}>Closed-Loop Edge Irrigation Ecosystem</Text>
+          <Text style={styles.pageTitle}>Irrigation & Pump Control</Text>
+          <Text style={styles.pageSubtitle}>Closed-Loop Edge AI decision engine</Text>
         </View>
 
         {/* MQTT Connection Badge */}
