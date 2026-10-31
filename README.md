@@ -25,7 +25,7 @@
 [![Arduino / ESP](https://img.shields.io/badge/Hardware-Arduino%20Uno%20%2B%20ESP--01-00979d?style=flat-square&logo=arduino)](https://www.arduino.cc/)
 [![MQTT](https://img.shields.io/badge/Telemetry-MQTT%20over%20TLS-38bdf8?style=flat-square&logo=mqtt)](https://mqtt.org/)
 [![FAO-56](https://img.shields.io/badge/Water%20Model-FAO--56%20Penman--Monteith-22c55e?style=flat-square)](http://www.fao.org/)
-[![GDD](https://img.shields.io/badge/Predictive%20Model-GDD%20Pest%20Forecast-f87171?style=flat-square)]()
+[![Pest AI](https://img.shields.io/badge/Pest%20AI-Image%20Inspection%20%26%20Diagnosis-f87171?style=flat-square)]()
 [![Arbitration](https://img.shields.io/badge/Engine-Cyber--Physical%20Arbitration-fbbf24?style=flat-square)]()
 
 </div>
@@ -39,7 +39,7 @@ Modern precision greenhouse farming often suffers from **fragmented subsystems**
 Research project **J26-IT-434** addresses these core gaps by designing and deploying an **end-to-end multi-agent closed-loop IoT ecosystem**:
 1. **Dynamic FAO-56 Crop-Stage Water Budgeting**: Dynamic evapotranspiration ($ET_c = ET_0 \times K_c$) tailored to tomato phenological phases (*Seedling*, *Vegetative*, *Flowering*, *Ripening*, *Harvest*).
 2. **Real-time Soil NPK & Anti-Leaching Protection**: Live soil $N$, $P$, $K$, and volumetric moisture monitoring with automated threshold guards.
-3. **7-Day Predictive Pest Forecasting**: Cumulative Growing Degree Days (GDD) heat accumulation model forecasting pest emergence up to a week prior to physical manifestation.
+3. **Foliar Pest & Disease Image Diagnostics**: Computer vision leaf inspection with real-time microclimate risk correlation, spray-history tracking, and safe treatment recommendations.
 4. **Automated Inter-System Fail-Safe Interlocks**: A Central State Machine enforcing mutual exclusion across spraying, irrigation, and fertilization cycles.
 5. **Cyber-Physical Conflict Arbitration**: Resolves operational disputes between AI edge predictions and human farmer manual overrides to prevent crop stress and root waterlogging.
 
@@ -84,10 +84,10 @@ The project is structured into **three synchronized repositories** comprising th
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
 │  📱 LAYER 4 — APPLICATION & DECISION LAYER  (Cross-Platform React Native Expo App)             │
-│        Live Telemetry Dashboard · Irrigation Control · NPK Hub · GDD Pest AI · Manual Override  │
+│        Live Telemetry Dashboard · Irrigation Control · NPK Hub · Pest Health AI · Manual Override│
 ├─────────────────────────────────────────────────────────────────────────────────────────────────┤
 │  ☁️ LAYER 3 — INTELLIGENCE & COORDINATION LAYER  (FastAPI Backend & State Machine)               │
-│        FAO-56 ETc Engine · Tetens VPD Model · GDD Accumulator · Cyber-Physical Arbitration       │
+│        FAO-56 ETc Engine · Tetens VPD Model · Foliar Pest/Disease AI · Cyber-Physical Arbitration│
 ├─────────────────────────────────────────────────────────────────────────────────────────────────┤
 │  📶 LAYER 2 — NETWORK & TELEMETRY INGESTION LAYER  (Secure Cloud Messaging)                     │
 │        MQTT over TLS (mqtt.smartaquamarket.com) · Wi-Fi Bridge · Edge Buffering · REST API      │
@@ -139,9 +139,8 @@ Hosts the core algorithms, cyber-physical safety policies, and machine learning 
 | **FAO-56 Irrigation Engine** | $ET_c = ET_0 \times K_c$ | Computes exact daily water volume required for tomato growth phase |
 | **Dynamic Fertigation Engine** | $V_{\text{dose}} = (\Delta EC) \times V_{\text{root}} \times k \times f(\theta)$ | Automatically meters nutrient delivery based on soil moisture absorption and EC targets |
 | **Microclimate VPD Analyzer** | Tetens Equation | Calculates atmospheric dryness (VPD) to identify transpiration stress |
-| **GDD Pest Forecaster** | $\sum GDD = \frac{T_{max} + T_{min}}{2} - T_{base}$ | Proactively calculates heat unit accumulation for pest life-cycles |
+| **Foliar Pest & Disease Classifier** | MobileNetV2 Pipeline (224x224 RGB) | Image diagnosis from leaf photo uploads with severity, symptoms & remedies |
 | **Arbitration Engine** | Dynamic Policy Rules | Resolves conflicts between AI predictions and farmer manual overrides |
-| **Plant Health Classifier** | MobileNetV2 Pipeline | 224x224 RGB image analysis diagnosing early blight, mold, and deficiency |
 
 </details>
 
@@ -241,51 +240,40 @@ Where:
 
 ---
 
-### 3. 🐛 Predictive Pest Control & Machine Learning Forecaster
-**Uses real-time temperature, humidity, weather forecasts, and crop-stage data to predict pest risk using machine learning. Provides early warnings and supports spray-history validation and safe pest management recommendations.**
+### 3. 🐛 Foliar Pest & Disease Control via Computer Vision & Microclimate ML
+**Uses leaf image upload inspection, real-time temperature, humidity, weather forecasts, and crop-stage data to detect pest/disease risk using machine learning. Provides diagnostic identification, supports spray-history validation, and delivers safe Integrated Pest Management (IPM) recommendations.**
 
-Insect reproduction and nymph emergence are biologically driven by thermal heat units and ambient moisture rather than calendar dates. Our system unifies continuous IoT sensory feeds, external meteorological forecasts, and phenological crop tracking into a predictive machine learning pipeline to protect greenhouse tomato crops (*Solanum lycopersicum*) proactively.
+#### A. Pest & Plant Health Component Architecture
+The pest management workflow is driven directly by the mobile app's **Pest & Plant Health** module (`plant-health.tsx`) connected to the backend vision inference engine (`/api/v1/plant-health/analyze`):
+1. **Foliar Image Capture & Upload**: The farmer captures or uploads a leaf photograph directly through the mobile app using the device camera or gallery (`expo-image-picker`).
+2. **Image Preprocessing Pipeline**: The backend validates the uploaded image bytes, converts them to standard 224x224 RGB tensor resolution via lanczos resampling, and performs normalization suitable for deep learning classification.
+3. **Machine Learning Diagnostic Inference**: A convolutional neural network (MobileNetV2 / CNN architecture) analyzes foliar lesion patterns, concentric target rings, chlorotic halos, and pest damage signatures to output:
+   - **Disease / Pest Identification** (e.g., *Early Blight (Alternaria solani)*, *Late Blight (Phytophthora infestans)*, *Tomato Leaf Mold (Passalora fulva)*, or *Whitefly / Insect Infestation*).
+   - **Diagnostic Confidence Score** (e.g., 94.6% confidence).
+   - **Severity Rating** (*Mild*, *Moderate*, *Severe*, or *Healthy*).
+   - **Detailed Pathological Profile & Symptoms List**.
 
-#### A. Multi-Source Feature Ingestion Pipeline
-The predictive engine continuously ingests four key environmental dimensions:
-1. **Real-Time Canopy Microclimate**: Ambient dry-bulb temperature ($T_{air}$) and relative humidity ($RH\%$) streamed continuously from field DHT11/DHT22 sensors.
-2. **7-Day Meteorological Weather Forecasts**: External forecast vectors (precipitation probability, diurnal temperature swings, barometric pressure) ingested via the OpenWeatherMap API to anticipate imminent pest-friendly microclimate conditions.
-3. **Phenological Crop-Stage Susceptibility**: Crop stage metadata (*Seedling*, *Vegetative*, *Flowering*, *Ripening*). For example, during the *Flowering* stage, soft succulent shoot growth and tender floral tissue present significantly higher vulnerability to sap-sucking pests.
-4. **Vapor Pressure Deficit (VPD)**: Real-time atmospheric dryness ($VPD$) derived via the Tetens formulation, serving as a biological proxy for leaf boundary layer moisture where fungal and pest spore germination occurs.
+#### B. Environmental Microclimate & Forecast Context Correlation
+In addition to visual inspection, the pest control system cross-references real-time environmental telemetry:
+- **Temperature & Humidity ($T_{air}, RH\%$)**: Streamed from the field DHT11/DHT22 sensor via the ESP-01 bridge. High relative humidity ($RH > 80\%$) coupled with temperatures of $20^\circ\text{C} - 28^\circ\text{C}$ flags high pathogen spore germination and proliferation risk.
+- **Vapor Pressure Deficit (VPD)**: Derived via the Tetens equation; low VPD ($< 0.5\text{ kPa}$) signifies condensation and stagnant canopy moisture favoring foliar fungi.
+- **Weather Forecast Integration**: Precipitation probability and humidity forecasts from the OpenWeatherMap API warn if upcoming weather will accelerate fungal or insect proliferation.
+- **Crop Growth Stage Susceptibility**: Flowering and vegetative phases are weighted higher due to succulent shoot growth and tender floral tissues.
 
-#### B. Biological Formulation & Machine Learning Inference
-The predictive model combines biological **Growing Degree Days (GDD)** thermal accumulation with a multi-layer classification model to estimate pest outbreak probability ($P_{\text{risk}}$):
+#### C. Tomato Disease & Pest Catalog Diagnostic Profiles
 
-$$GDD_{daily} = \max\left(0, \frac{T_{max} + T_{min}}{2} - T_{base}\right)$$
-
-$$\text{Cumulative Heat Units} = \sum_{t=1}^{D} GDD_t$$
-
-Where:
-- $T_{base} = 10.0^\circ\text{C}$ for greenhouse whiteflies (*Bemisia tabaci*), thrips, and leaf miners (*Tuta absoluta*).
-- $T_{max}, T_{min}$: 24-hour diurnal temperature extremes recorded by edge nodes.
-- **Machine Learning Risk Classification**:
-  $$P_{\text{risk}} = \sigma\left( \mathbf{W}_1 \cdot [GDD_{cum}, T_{avg}, RH_{avg}, VPD, \text{Rain}_{\text{forecast}}, \text{Stage}_{\text{weight}}] + b_1 \right)$$
-  When cumulative thermal units approach the species-specific threshold ($\ge 540\text{ GDD}$ for *Bemisia tabaci*), the model triggers proactive high-priority warnings **up to 7 days before physical crop emergence**.
-
-#### C. Proactive Risk Tiers & Early Warning Thresholds
-
-| Risk Level | GDD Buffer / Index | Outbreak Probability | System State | Recommended Action |
+| Detected Pathogen / Pest | Visual Diagnostic Signature | Severity | Primary Symptoms | Immediate Agronomic Action |
 |:---|:---|:---|:---|:---|
-| 🟢 **Low Risk** | $> 80\text{ GDD}$ remaining | $P_{\text{risk}} < 30\%$ | Nominal Monitoring | Zero chemical spray required; beneficial insect populations preserved |
-| 🟡 **Moderate Risk** | $30 - 80\text{ GDD}$ remaining | $30\% \le P_{\text{risk}} < 70\%$ | Advisory Warning | Increase visual trap scouting; inspect lower leaf epidermis; deploy yellow sticky cards |
-| 🔴 **High / Critical** | $< 30\text{ GDD}$ (Imminent) | $P_{\text{risk}} \ge 70\%$ | Emergence Alert | Queue targeted bio-pesticide or approved IPM spray; prepare 24-hr spray lockout |
+| 🍂 **Early Blight** (*Alternaria solani*) | Concentric dark target rings with chlorotic yellow halo | Moderate | Defoliation starting from lower canopy, brown lesions | Prune lower canopy; apply copper hydroxide or bio-fungicide; maintain drip irrigation |
+| 🌧️ **Late Blight** (*Phytophthora infestans*) | Water-soaked dark gray blotches with pale green borders | Severe | Rapidly spreading leaf decay, white underside bloom | Isolate infected plants; apply systemic fungicide; cease misting immediately |
+| 🍃 **Leaf Mold** (*Passalora fulva*) | Pale chlorotic yellow patches on upper surface, olive spores beneath | Mild | Curling mature leaves, velvety brown downy underside | Increase greenhouse ventilation ($RH < 75\%$); widen plant spacing |
+| 🐛 **Sap-Sucking Pests** (*Whiteflies / Aphids*) | Leaf stippling, honeydew excretion, curled shoot tips | Moderate | Foliar chlorosis, sooty mold, vectoring tomato yellow leaf curl | Deploy yellow sticky cards; apply cold-pressed Neem oil ($5\text{ mL/L}$) |
+| 🌿 **Healthy Tissue** | Vibrant uniform green chlorophyll with intact margins | Healthy | Turgid petiole structure, zero necrotic spotting | Maintain balanced fertigation; routine monitoring |
 
-#### D. Spray-History Validation & Interlock Verification
-To prevent chemical over-application, pesticide resistance, and consumer health hazards, the system validates all past spray applications:
-- **Pre-Harvest Interval (PHI) Compliance**: Audits application dates against mandatory pre-harvest withdrawal windows to prevent harmful residues on harvested tomatoes.
-- **Chemical Mode of Action (MoA) Rotation**: Tracks active chemical ingredients in past spray logs to recommend rotational biological controls and avoid pest resistance build-up.
+#### D. Spray-History Validation & 24-Hour Interlock Enforcement
+- **Spray Record Auditing**: The mobile module tracks historical application timestamps, chemical names, and dosages to safeguard harvest intervals (PHI).
 - **Automated 24-Hour Spray–Irrigation Lock**: Immediately upon logging or executing an approved spray, the Central State Machine engages an automated 24-hour irrigation lockout, preventing overhead or drip water from washing active pesticide residues off foliage into the root zone.
-
-#### E. Safe Integrated Pest Management (IPM) Guidance
-When risk thresholds are exceeded, the system delivers structured, agronomic recommendations prioritized by safety:
-1. **Biological / Organic First Line**: Application of cold-pressed Neem oil ($5\text{ mL/L}$), *Bacillus thuringiensis* (Bt), or microbial bio-fungicides to suppress early instar nymphs without chemical toxicity.
-2. **Cultural & Physical Controls**: Strategic greenhouse vent screening, manual leaf defoliation of lower senescent leaves, and deployment of wavelength-calibrated yellow sticky insect traps.
-3. **Targeted Chemical Remediation (Last Resort)**: If threshold crosses critical limits, approved selective insecticides (e.g., Pyriproxyfen or Acetamiprid) are prescribed with precise dosages, accompanied by safety equipment reminders and harvest lockout periods.
+- **Safe IPM Guidance**: Prioritizes biological controls (cold-pressed Neem oil, *Bacillus thuringiensis*, sticky traps) before recommending selective chemical interventions as a last resort.
 
 ---
 
@@ -318,7 +306,7 @@ When a farmer manually overrides automated Edge AI pump predictions, operational
 | 👤 **Member 1** | **Hardware & Perception Specialist** | **Layer 1 — Perception Layer** | • Arduino Uno bare-metal firmware (`agro.ino`)<br/>• ESP-01 Wi-Fi MQTT bridge (`esp-01.ino`)<br/>• NPK, DHT11, Flow meter & Solenoid wiring |
 | 👤 **Member 2** | **Network & Cloud Specialist** | **Layer 2 & 3 — Network & Backend** | • Cloud MQTT broker configuration over TLS<br/>• FastAPI telemetry ingestion pipelines<br/>• SQLAlchemy ORM database architecture |
 | 👤 **Member 3** | **Mobile App & UI/UX Specialist** | **Layer 4 — Application Layer** | • SmartFarm cross-platform React Native app<br/>• Real-time farmer telemetry dashboard & charts<br/>• Closed-loop mode switchers & alert UI |
-| 👤 **Member 4** | **Intelligence & Sync Lead** | **Layer 3 — Intelligence Layer** | • FAO-56 crop-stage water requirement model<br/>• GDD predictive pest emergence algorithms<br/>• Cyber-physical conflict arbitration engine |
+| 👤 **Member 4** | **Intelligence & Sync Lead** | **Layer 3 — Intelligence Layer** | • FAO-56 crop-stage water requirement model<br/>• MobileNetV2 foliar disease classifier<br/>• Cyber-physical conflict arbitration engine |
 
 ---
 
@@ -340,7 +328,7 @@ J26-IT-434_IoT_EchoSystem_For_Smart_Agriculture/
 │   │   │       ├── 📄 index.tsx            # 1. Home: Overview, Interlocks, Microclimate & Targets
 │   │   │       ├── 📄 irrigation.tsx       # 2. Irrigation: AI Closed-Loop & Solenoid Controls
 │   │   │       ├── 📄 fertilizer.tsx       # 3. Fertilizer: Live NPK Telemetry & Stage Targets
-│   │   │       ├── 📄 plant-health.tsx     # 4. Plant Health: Spray Lockout, GDD & Image AI
+│   │   │       ├── 📄 plant-health.tsx     # 4. Plant Health: Leaf Photo Diagnosis, Spray Lockout & IPM
 │   │   │       └── 📄 farm.tsx             # 5. Profile: Nodes, Zones, Calibrations & Team
 │   │   ├── 📂 components/                  # Reusable UI component library
 │   │   │   ├── 📄 AppHeader.tsx            # Standardized header with MQTT badge
@@ -361,7 +349,7 @@ J26-IT-434_IoT_EchoSystem_For_Smart_Agriculture/
 │   ├── 🌐 system-overview.html             # Comprehensive 4-layer architectural breakdown
 │   ├── 🌐 data-flow.html                   # Signal flow diagrams and decision matrices
 │   ├── 🌐 hardware.html                    # Hardware schematics, ESP32 pinouts & sensor specs
-│   └── 🌐 cloud-intelligence.html          # State Machine, FAO-56 & GDD algorithm documentation
+│   └── 🌐 cloud-intelligence.html          # State Machine, FAO-56 & AI model documentation
 │
 └── 📂 system-architecture/                 # Original system architecture blueprints
     └── 🌐 architecture.html
@@ -429,7 +417,7 @@ cd ../J26-IT-434_IoT_EchoSystem_For_Smart_Agriculture_Firmware_For_IoT
 |:---|:---|:---|:---|
 | 💧 **Irrigation Water Usage** | Static scheduled timer | Dynamic FAO-56 ($ET_0 \times K_c$) | **20% – 40% water conservation** |
 | 🌿 **Fertilizer Runoff** | Fixed calendar recipes | Soil NPK feedback & Anti-Leaching | **10% – 15% reduction in nutrient waste** |
-| 🐛 **Chemical Pesticide Use** | Reactive spraying after infestation | 7-day GDD predictive emergence alerts | **Up to 67% reduction in pesticide sprays** |
+| 🐛 **Chemical Pesticide Use** | Reactive spraying after infestation | Image AI pest diagnosis & microclimate risk assessment | **Up to 67% reduction in pesticide sprays** |
 | ⚡ **Operational Conflicts** | Uncoordinated manual interventions | Central State Machine & Interlocks | **Zero conflicting actuator commands** |
 | 🛡️ **Crop Root Health** | Vulnerable to waterlogging/wilting | Cyber-Physical Conflict Arbitration | **Guaranteed safe root-zone boundaries** |
 
