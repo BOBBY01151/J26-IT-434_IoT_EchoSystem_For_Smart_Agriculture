@@ -1,212 +1,350 @@
 <div align="center">
 
-<img src="https://img.shields.io/badge/SLIIT-Research%20Project-22c55e?style=for-the-badge&logo=leaflet&logoColor=white" alt="SLIIT Research" />
+<img src="https://img.shields.io/badge/SLIIT-Faculty%20of%20Computing-22c55e?style=for-the-badge&logo=leaflet&logoColor=white" alt="SLIIT Research" />
 <img src="https://img.shields.io/badge/Project%20ID-J26--IT--434-0ea5e9?style=for-the-badge" alt="Project ID" />
-<img src="https://img.shields.io/badge/Year-4th%20Year%20%7C%201st%20Sem-a78bfa?style=for-the-badge" alt="Year" />
-<img src="https://img.shields.io/badge/Status-In%20Progress-fbbf24?style=for-the-badge" alt="Status" />
+<img src="https://img.shields.io/badge/Research%20Year-4th%20Year%20%7C%201st%20Sem%20(2026)-a78bfa?style=for-the-badge" alt="Year" />
+<img src="https://img.shields.io/badge/Status-Completed%20%26%20Synchronized-22c55e?style=for-the-badge" alt="Status" />
 
 <br/><br/>
 
 # 🌱 Intelligent Multi-Agent Closed-Loop IoT Ecosystem for Smart Agriculture
+### *Smart Edge-Native Precision Agriculture Manager for Greenhouse Tomato Crops (Solanum lycopersicum)*
 
 **Design and Implementation of an Integrated, Mobile-Controlled IoT Ecosystem for Smart Agriculture:**  
-*Bridging the Gaps in Inter-System Closed-Loop Interactivity, Crop-Stage Irrigation, and Predictive Pest Forecasting*
+*Bridging the Gaps in Inter-System Closed-Loop Interactivity, Crop-Stage Irrigation, Soil EC/NPK Synchronization, Predictive Pest Forecasting, and Cyber-Physical Conflict Arbitration.*
 
 <br/>
 
-> ### 🖥️ [View Interactive System Architecture →](./project-architecture/index.html)
-> *Open `architecture.html` in your browser for a full visual walkthrough of the system design, layer breakdown, innovations, and team roles.*
+> 🖥️ **[Open Interactive System Architecture Hub →](./project-architecture/index.html)**  
+> *Interactive multi-page architectural documentation with layer breakdowns, signal flowcharts, ESP32/Arduino pinouts, and State Machine animations.*
 
 <br/>
 
-[![ESP32](https://img.shields.io/badge/MCU-ESP32-e34f26?style=flat-square&logo=espressif)](https://www.espressif.com/)
-[![LoRaWAN](https://img.shields.io/badge/Protocol-LoRaWAN%20%2F%20MQTT-38bdf8?style=flat-square)](https://lora-alliance.org/)
-[![Firebase](https://img.shields.io/badge/Backend-Firebase-f59e0b?style=flat-square&logo=firebase)](https://firebase.google.com/)
-[![FAO-56](https://img.shields.io/badge/Model-FAO--56%20ETo-22c55e?style=flat-square)](http://www.fao.org/)
-[![GDD](https://img.shields.io/badge/Algorithm-GDD%20Pest%20Forecast-f87171?style=flat-square)]()
+[![React Native](https://img.shields.io/badge/Mobile-React%20Native%20(Expo%2052)-61dafb?style=flat-square&logo=react)](https://expo.dev/)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI%20(Python%203.10+)-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Arduino / ESP](https://img.shields.io/badge/Hardware-Arduino%20Uno%20%2B%20ESP--01-00979d?style=flat-square&logo=arduino)](https://www.arduino.cc/)
+[![MQTT](https://img.shields.io/badge/Telemetry-MQTT%20over%20TLS-38bdf8?style=flat-square&logo=mqtt)](https://mqtt.org/)
+[![FAO-56](https://img.shields.io/badge/Water%20Model-FAO--56%20Penman--Monteith-22c55e?style=flat-square)](http://www.fao.org/)
+[![GDD](https://img.shields.io/badge/Predictive%20Model-GDD%20Pest%20Forecast-f87171?style=flat-square)]()
+[![Arbitration](https://img.shields.io/badge/Engine-Cyber--Physical%20Arbitration-fbbf24?style=flat-square)]()
 
 </div>
 
 ---
 
-## 🎯 Vision & Mission
+## 📖 Executive Summary & Research Scope
 
-| | |
-|---|---|
-| **🌍 Vision** | To champion a sustainable agricultural future by transforming traditional farms into highly synchronized, climate-resilient, and zero-waste ecosystems through intelligent, closed-loop IoT technology. |
-| **🚀 Mission** | To design, develop, and deploy an integrated, cost-effective smart farming platform that unifies irrigation, dynamic fertilization, and pest control under a single, cohesive control loop managed by an intuitive, offline-capable mobile application. |
+Modern precision greenhouse farming often suffers from **fragmented subsystems** where irrigation, nutrient fertigation, and pest control operate as isolated silos. This causes operational conflicts (e.g. irrigating immediately after pesticide spraying washes away costly chemicals into groundwater, or over-fertilizing near soil saturation triggers irreversible nutrient leaching).
 
----
-
-## 🏗️ System Architecture
-
-> 📐 **[Open Full Interactive Architecture →](./project-architecture/index.html)**  
-> The interactive page includes color-coded layers, technology tags, and animated flow diagrams.
-
-The system is built on **four tightly integrated layers** forming a complete closed-loop feedback system:
-
-```
-┌─────────────────────────────────────────────────────────┐
-│  📱  LAYER 4 — Application Layer  (Mobile Dashboard)    │
-│        Cross-platform · Offline-first · Manual Override  │
-├─────────────────────────────────────────────────────────┤
-│  ☁️  LAYER 3 — Cloud & Intelligence Layer               │
-│        Firebase · FAO-56 ETo · GDD Model · State Machine │
-├─────────────────────────────────────────────────────────┤
-│  📶  LAYER 2 — Network Layer                            │
-│        LoRaWAN · MQTT/TLS · Wi-Fi · Edge Buffering       │
-├─────────────────────────────────────────────────────────┤
-│  📡  LAYER 1 — Perception Layer  (Hardware)             │
-│        ESP32 · Soil Moisture · EC · DHT22 · Flow Meter   │
-└─────────────────────────────────────────────────────────┘
-```
-
-<details>
-<summary><strong>📡 Layer 1 — Perception Layer (Hardware & Local Sensing)</strong></summary>
-
-Physical sensors and actuators deployed in the field collect real-time environmental data and execute control commands.
-
-| Component | Purpose |
-|---|---|
-| ESP32 Microcontroller | Edge processing & Wi-Fi / LoRa communication |
-| Capacitive Soil Moisture Sensor | Volumetric water content measurement |
-| EC (Electrical Conductivity) Sensor | Soil nutrient concentration feedback |
-| DHT22 | Ambient temperature & humidity (microclimate) |
-| Hall-Effect Liquid Flow Meter | Precise irrigation volume tracking |
-| Solid-State Relay | Actuator control for pumps and valves |
-
-</details>
-
-<details>
-<summary><strong>📶 Layer 2 — Network Layer (Communication & Telemetry)</strong></summary>
-
-Secure, low-power data pipelines transmit sensor readings to the cloud and relay actuation commands back to field devices.
-
-| Protocol | Use Case |
-|---|---|
-| LoRaWAN | Long-range, low-power field telemetry |
-| MQTT over TLS | Real-time, secure cloud messaging |
-| Wi-Fi | Local gateway and mobile app sync |
-| Edge Buffering | Offline data persistence during connectivity loss |
-
-</details>
-
-<details>
-<summary><strong>☁️ Layer 3 — Cloud & Intelligence Layer</strong></summary>
-
-The brain of the system — hosts the Central Coordination Engine, FAO-56 algorithms, GDD databases, and weather API integrations.
-
-| Component | Role |
-|---|---|
-| Firebase / ThingsBoard | Real-time database & telemetry backend |
-| FAO-56 ETo Algorithm | Dynamic crop-stage water target calculation |
-| GDD Database | Pest life-cycle heat unit accumulation |
-| Weather API | Rain-skip & forecast-aware irrigation |
-| Central Coordination Engine | System State Machine & interlock enforcement |
-
-</details>
-
-<details>
-<summary><strong>📱 Layer 4 — Application Layer (Mobile Dashboard)</strong></summary>
-
-A cross-platform mobile app for real-time monitoring, manual override, crop-stage input, and offline-first operation.
-
-| Feature | Description |
-|---|---|
-| Real-Time Dashboard | Live sensor data visualization & charts |
-| Crop-Stage Input | Manual crop phase selection for FAO-56 Kc |
-| Manual Override | Direct actuator control from the phone |
-| Offline-First Sync | Queues commands and syncs when reconnected |
-| Alert System | Push notifications for forecasted pest events |
-
-</details>
+Research project **J26-IT-434** addresses these core gaps by designing and deploying an **end-to-end multi-agent closed-loop IoT ecosystem**:
+1. **Dynamic FAO-56 Crop-Stage Water Budgeting**: Dynamic evapotranspiration ($ET_c = ET_0 \times K_c$) tailored to tomato phenological phases (*Seedling*, *Vegetative*, *Flowering*, *Ripening*, *Harvest*).
+2. **Real-time Soil NPK & Anti-Leaching Protection**: Live soil $N$, $P$, $K$, and volumetric moisture monitoring with automated threshold guards.
+3. **7-Day Predictive Pest Forecasting**: Cumulative Growing Degree Days (GDD) heat accumulation model forecasting pest emergence up to a week prior to physical manifestation.
+4. **Automated Inter-System Fail-Safe Interlocks**: A Central State Machine enforcing mutual exclusion across spraying, irrigation, and fertilization cycles.
+5. **Cyber-Physical Conflict Arbitration**: Resolves operational disputes between AI edge predictions and human farmer manual overrides to prevent crop stress and root waterlogging.
 
 ---
 
-## 💡 Core Innovations
+## 🏛️ Ecosystem Repositories Map
 
-### 1. 💧 Dynamic Crop-Stage Water Allocation *(FAO-56 Integration)*
-Replaces simple static thresholds with dynamic weather-API integration (*Rain-Skips*) and FAO-56 evapotranspiration modeling. Water targets adjust based on the specific crop growth stage (seedling → vegetative → flowering → ripening).
-
-```
-ETo (Weather + Microclimate) × Kc (Crop Stage) → Dynamic Irrigation Target
-```
-
-### 2. 🧪 Dynamic Fertigation Syncing
-Dispenses nutrients based on **real-time soil EC feedback** and soil moisture tension, ensuring optimal root absorption and preventing chemical leaching and runoff.
+The project is structured into **three synchronized repositories** comprising the perception hardware, intelligence backend, and mobile management dashboard:
 
 ```
-EC(soil) + θ (moisture tension) → Computed Fertigation Dose
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                           J26-IT-434 SMART AGRICULTURE ECOSYSTEM                                │
+└────────────────────────────────────────────────┬────────────────────────────────────────────────┘
+                                                 │
+      ┌──────────────────────────────────────────┼──────────────────────────────────────────┐
+      ▼                                          ▼                                          ▼
+┌───────────────────────────┐      ┌───────────────────────────┐      ┌───────────────────────────┐
+│ 📱 Mobile Application &   │      │ ☁️ Cloud & Intelligence   │      │ 📡 Hardware Firmware &    │
+│    Architecture Hub       │      │    Backend API            │      │    Sensor IoT Bridge      │
+├───────────────────────────┤      ├───────────────────────────┤      ├───────────────────────────┤
+│ • SmartFarm (Expo v52)    │◄────►│ • FastAPI (Python 3.10+)  │◄────►│ • Arduino Uno (Bare-Metal)│
+│ • Live Farmer Dashboard   │ HTTP │ • FAO-56 & VPD Engines    │ MQTT │ • ESP-01 Wi-Fi Bridge     │
+│ • Closed-Loop Controls    │ REST │ • ML Disease Diagnostics  │ TLS  │ • NPK, DHT11, Flow Meter  │
+│ • Interactive Hub (.html) │      │ • Arbitration Engine      │      │ • Solenoid Valve Relay    │
+│ [Primary Repository]      │      │ [Backend Repository]      │      │ [Firmware Repository]     │
+└───────────────────────────┘      └───────────────────────────┘      └───────────────────────────┘
 ```
 
-### 3. 🐛 Microclimate-Driven Predictive Pest Forecasting
-Uses DHT22 microclimate data to calculate cumulative **Growing Degree Days (GDD)**. Forecasts pest life-cycles and outbreaks **up to 7 days** before physical emergence — enabling proactive, not reactive, crop protection.
+1. **📱 [J26-IT-434_IoT_EchoSystem_For_Smart_Agriculture](./)** *(This Repository)*:
+   - Mobile Application (`SmartFarm/`) built with React Native & Expo SDK 52.
+   - Interactive Architecture Hub (`project-architecture/`) & System Visualizations.
+2. **☁️ [J26-IT-434_IoT_EchoSystem_For_Smart_Agriculture-Backend](../J26-IT-434_IoT_EchoSystem_For_Smart_Agriculture-Backend)**:
+   - FastAPI server with SQLite/PostgreSQL, SQLAlchemy 2.0 ORM, and Pydantic v2 schemas.
+   - Hosts the Arbitration Engine (`/api/v1/arbitration/resolve`), FAO-56 calculator, and disease classifier.
+3. **📡 [J26-IT-434_IoT_EchoSystem_For_Smart_Agriculture_Firmware_For_IoT](../J26-IT-434_IoT_EchoSystem_For_Smart_Agriculture_Firmware_For_IoT)**:
+   - Hardware source code for Arduino Uno (`uno/agro/agro.ino`) and ESP-01 MQTT bridge (`esp-01.ino`).
+
+---
+
+## 🏗️ 4-Tier Cyber-Physical System Architecture
 
 ```
-∑ GDD = (Tmax + Tmin) / 2 − Tbase  →  Pest Emergence Forecast (D+7)
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  📱 LAYER 4 — APPLICATION & DECISION LAYER  (Cross-Platform React Native Expo App)             │
+│        Live Telemetry Dashboard · Irrigation Control · NPK Hub · GDD Pest AI · Manual Override  │
+├─────────────────────────────────────────────────────────────────────────────────────────────────┤
+│  ☁️ LAYER 3 — INTELLIGENCE & COORDINATION LAYER  (FastAPI Backend & State Machine)               │
+│        FAO-56 ETc Engine · Tetens VPD Model · GDD Accumulator · Cyber-Physical Arbitration       │
+├─────────────────────────────────────────────────────────────────────────────────────────────────┤
+│  📶 LAYER 2 — NETWORK & TELEMETRY INGESTION LAYER  (Secure Cloud Messaging)                     │
+│        MQTT over TLS (mqtt.smartaquamarket.com) · Wi-Fi Bridge · Edge Buffering · REST API      │
+├─────────────────────────────────────────────────────────────────────────────────────────────────┤
+│  📡 LAYER 1 — PERCEPTION & ACTUATION LAYER  (Field Hardware)                                    │
+│        Arduino Uno · ESP-01 · DHT11 · NPK Analog Sensor · Hall Flow Meter · Solenoid Relay · OLED│
+└─────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 4. 🔄 Multi-Agent Closed-Loop Interactivity
+<details>
+<summary><strong>📡 Layer 1 — Perception & Actuation Layer (Field Hardware)</strong></summary>
 
-A **Central Coordination Engine** maintains a System State Machine and enforces three critical fail-safe interlocks:
+The edge layer consists of physical sensing probes and electromechanical actuators deployed in the root zone and canopy:
 
-| Interlock Rule | Trigger | Action |
+| Component | Interface / Pin | Function |
 |---|---|---|
-| 🚫 **Spray–Irrigation Lock** | Pest spray executed | Irrigation blocked for 24 hours |
-| 💦 **Leaching Avoidance** | Soil moisture near saturation | Fertilization postponed |
-| 🌧️ **Weather-Aware Skip** | Rain forecast via Weather API | Automatic irrigation paused |
+| **ATmega328P (Arduino Uno)** | Core MCU | Bare-metal ISR pulse counting, ADC reading, and OLED rendering |
+| **ESP-01 (ESP8266)** | UART 9600 Baud | Wi-Fi bridge publishing sensor telemetry to Cloud MQTT |
+| **DHT11 Microclimate Sensor** | Digital Pin 4 (PD4) | Ambient air temperature (°C) & relative humidity (%) |
+| **Hall-Effect Liquid Flow Meter** | Interrupt 0 / Pin 2 (PD2) | Water flow rate monitoring (450 pulses/liter calibration) |
+| **Soil NPK Sensor** | Analog Pins A0, A1, A2 | Nitrogen (N), Phosphorus (P), Potassium (K) analog counts |
+| **Capacitive Soil Moisture Probe** | Analog Input | Root-zone volumetric water content (VWC %) |
+| **Solenoid Water Valve Relay** | Digital Pin 13 (PB5) | Closed-loop 12V DC water valve actuation |
+| **SSD1306 OLED Display (128x64)** | I2C (Pins A4, A5) | Local field readout of temperature, flow, NPK, and Wi-Fi link |
 
----
+</details>
 
-## 📊 Expected Outcomes & Impact
+<details>
+<summary><strong>📶 Layer 2 — Network & Telemetry Layer (Communications)</strong></summary>
 
-| Metric | Projected Improvement |
-|---|---|
-| 💧 **Water Conservation** | 20% – 40% reduction in agricultural water usage |
-| 🌿 **Fertilizer Runoff** | 10% – 15% reduction in fertilizer waste |
-| 🐛 **Chemical Pesticide Use** | Up to **67% fewer** chemical applications |
-| ⚡ **Operational Reliability** | Zero-conflict operations via fail-safe interlocks |
-| 📡 **Pest Forecast Window** | Proactive alerts **7 days** before pest emergence |
+Ensures reliable, low-power telemetry transmission between edge controllers and the cloud backend:
 
----
-
-## 👥 Team Workload Distribution
-
-| # | Role | Responsibilities |
+| Protocol | Broker / Host | Topics & Telemetry Channels |
 |---|---|---|
-| 👤 **Member 1** | 🔧 Hardware & Perception Layer Specialist | Sensor integration, actuator wiring, relay control, and field-level calibration |
-| 👤 **Member 2** | 🌐 Network & Cloud Infrastructure Specialist | LoRaWAN / MQTT setup, cloud database architecture, and API development |
-| 👤 **Member 3** | 📱 Mobile Application & UI/UX Designer | Cross-platform dashboard, agricultural UX, and offline-first sync logic |
-| 👤 **Member 4** | 🤖 Intelligence & Synchronization Lead | Central Coordination Engine, FAO-56 & GDD algorithms, and predictive ML models |
+| **MQTT over TLS** | `mqtt.smartaquamarket.com:1883` | `agro/out/<mac>/temp`, `agro/out/<mac>/hum`, `agro/out/<mac>/flow`, `agro/out/<mac>/n`, `agro/out/<mac>/p`, `agro/out/<mac>/k`, `agro/out/<mac>/solenoid` |
+| **Inbound Actuator Control** | Subscribed Topic | `agro/in/<mac>/solenoid` (Payload `0` or `1` for valve control) |
+| **Retained LWT & Link Status**| Retained Topic | `agro/out/<mac>/link` (`wifi:1,mqtt:1` or `wifi:0,mqtt:0`) |
+| **RESTful HTTP / JSON** | FastAPI Gateway | Endpoints for mobile synchronization, image uploads, and analytics |
+
+</details>
+
+<details>
+<summary><strong>☁️ Layer 3 — Intelligence & Coordination Layer (Backend API)</strong></summary>
+
+Hosts the core algorithms, cyber-physical safety policies, and machine learning models:
+
+| Service / Engine | Formulation / Technology | Purpose |
+|---|---|---|
+| **FAO-56 Irrigation Engine** | $ET_c = ET_0 \times K_c$ | Computes exact daily water volume required for tomato growth phase |
+| **Microclimate VPD Analyzer** | Tetens Equation | Calculates atmospheric dryness (VPD) to identify transpiration stress |
+| **GDD Pest Forecaster** | $\sum GDD = \frac{T_{max} + T_{min}}{2} - T_{base}$ | Proactively calculates heat unit accumulation for pest life-cycles |
+| **Arbitration Engine** | Dynamic Policy Rules | Resolves conflicts between AI predictions and farmer manual overrides |
+| **Plant Health Classifier** | MobileNetV2 Pipeline | 224x224 RGB image analysis diagnosing early blight, mold, and deficiency |
+
+</details>
+
+<details>
+<summary><strong>📱 Layer 4 — Application Layer (SmartFarm Mobile Dashboard)</strong></summary>
+
+An intuitive, offline-capable mobile application crafted for farmers:
+
+| Screen / Feature | Path | Function |
+|---|---|---|
+| **Home Dashboard** | `src/app/(tabs)/index.tsx` | Overview of greenhouse microclimate, interlocks, water targets, and pest risk |
+| **Irrigation & Pump** | `src/app/(tabs)/irrigation.tsx` | AI closed-loop vs manual pump mode, anomaly detection, and event history |
+| **Fertilizer & NPK Hub** | `src/app/(tabs)/fertilizer.tsx` | Live NPK sensor telemetry, phenological growth stage guidelines, and tasks |
+| **Pest & Plant Health** | `src/app/(tabs)/plant-health.tsx`| 24-hour spray lockout timer, leaf photo diagnostic tool, and field reports |
+| **Farm Profile** | `src/app/(tabs)/farm.tsx` | Facility profile, hardware node registry, zone configurations, and team metadata |
+| **Notifications** | `src/app/notifications.tsx` | Filterable high-priority notifications for critical microclimate & interlock alerts |
+
+</details>
 
 ---
 
-## 📁 Repository Structure
+## 🔬 Scientific Formulations & Core Innovations
+
+### 1. 💧 Dynamic Crop-Stage Water Allocation (FAO-56 Penman–Monteith)
+Static irrigation timers result in either drought stress or root asphyxiation. Our engine calculates reference evapotranspiration ($ET_0$) and modulates daily volume ($V_{irr}$) using stage-specific crop coefficients ($K_c$):
+
+$$ET_c = ET_0 \times K_c(\text{Stage})$$
+
+$$V_{irr} = \left(ET_c \times A_{canopy}\right) + \Delta \theta_{root}$$
+
+*Tomato Phenological Stage Coefficients ($K_c$):*
+- **Seedling**: $K_c = 0.60$ (Target soil moisture: 25%–35%)
+- **Vegetative**: $K_c = 0.80$ (Target soil moisture: 30%–40%)
+- **Flowering**: $K_c = 1.15$ (Target soil moisture: 35%–45% — High transpiration period)
+- **Ripening**: $K_c = 0.90$ (Target soil moisture: 30%–38%)
+- **Harvest**: $K_c = 0.70$ (Target soil moisture: 25%–32%)
+
+---
+
+### 2. 🧪 Dynamic Soil NPK & Anti-Leaching Guard
+Reads real-time nitrogen, phosphorus, and potassium concentrations directly from the optical/capacitive soil sensor via the ESP-01 bridge:
+- **Optimal Tomato Flowering NPK**: $N = 140–180\text{ mg/kg}$, $P = 90–140\text{ mg/kg}$, $K = 240–320\text{ mg/kg}$.
+- **Anti-Leaching Interlock**: Whenever soil moisture approaches field capacity ($\theta \ge 85\%$), the Central Coordination Engine automatically locks fertigation actuators to eliminate chemical runoff into local water tables.
+
+---
+
+### 3. 🐛 Microclimate-Driven Predictive Pest Forecasting (GDD Model)
+Insect emergence is biologically governed by accumulated environmental heat units rather than calendar days. By capturing continuous microclimate readings from the DHT11, the system computes cumulative Growing Degree Days:
+
+$$GDD_{daily} = \left(\frac{T_{max} + T_{min}}{2}\right) - T_{base}$$
+
+Where $T_{base} = 10.0^\circ\text{C}$ for greenhouse whiteflies (*Bemisia tabaci*) and leaf miners. When cumulative $GDD \ge \text{Threshold}$ ($540\text{ GDD}$), proactive alerts are sent to the mobile app **up to 7 days before physical crop infestation**.
+
+---
+
+### 4. 🔄 Multi-Agent Closed-Loop Fail-Safe Interlocks
+
+A centralized State Machine arbitrates between actuation agents to prevent hazardous operational conflicts:
+
+| Interlock Name | Trigger Condition | Automated Closed-Loop Action |
+|---|---|---|
+| 🚫 **Spray–Irrigation Lock** | Farmer triggers or records pesticide spray | Blocks irrigation solenoids for **24 hours** to prevent chemical wash-off |
+| 💦 **Anti-Leaching Guard** | Volumetric soil moisture $\ge 85\%$ | Halts fertilization dosing to prevent fertilizer runoff and leaching |
+| 🌧️ **Weather Rain-Skip** | OpenWeather API predicts rainfall $\ge 60\%$ | Suspends automatic irrigation cycles until weather clears |
+
+---
+
+### 5. ⚖️ Cyber-Physical Conflict Arbitration Engine
+When a farmer manually overrides automated Edge AI pump predictions, operational hazards may occur. The backend arbitration service (`/api/v1/arbitration/resolve`) inspects environmental telemetry and applies safety policies:
+- **Over-Irrigation Hazard Policy**: If the farmer requests water but soil moisture is $\ge 48\%$, the override is **blocked** to prevent root asphyxiation and fungal outbreak.
+- **Under-Irrigation Drought Policy**: If the farmer stops irrigation but soil moisture is $< 30\%$ (wilting point), the AI's emergency water dose is **enforced**.
+- **Safe Zone**: When within safe boundaries, human farmer authority is respected and logged in the audit trail.
+
+---
+
+## 👥 Research Team Workload Distribution
+
+**SLIIT · Faculty of Computing · 4th Year Research Project `J26-IT-434` (2026)**
+
+| Member | Role | Research Layer & Specialization | Key Contributions |
+|:---|:---|:---|:---|
+| 👤 **Member 1** | **Hardware & Perception Specialist** | **Layer 1 — Perception Layer** | • Arduino Uno bare-metal firmware (`agro.ino`)<br/>• ESP-01 Wi-Fi MQTT bridge (`esp-01.ino`)<br/>• NPK, DHT11, Flow meter & Solenoid wiring |
+| 👤 **Member 2** | **Network & Cloud Specialist** | **Layer 2 & 3 — Network & Backend** | • Cloud MQTT broker configuration over TLS<br/>• FastAPI telemetry ingestion pipelines<br/>• SQLAlchemy ORM database architecture |
+| 👤 **Member 3** | **Mobile App & UI/UX Specialist** | **Layer 4 — Application Layer** | • SmartFarm cross-platform React Native app<br/>• Real-time farmer telemetry dashboard & charts<br/>• Closed-loop mode switchers & alert UI |
+| 👤 **Member 4** | **Intelligence & Sync Lead** | **Layer 3 — Intelligence Layer** | • FAO-56 crop-stage water requirement model<br/>• GDD predictive pest emergence algorithms<br/>• Cyber-physical conflict arbitration engine |
+
+---
+
+## 📁 Repository Directory Structure
 
 ```
 J26-IT-434_IoT_EchoSystem_For_Smart_Agriculture/
+├── 📄 README.md                            # Comprehensive Ecosystem Documentation (This file)
 │
-├── 📄 README.md
+├── 📂 SmartFarm/                           # React Native / Expo Mobile Application
+│   ├── 📂 assets/                          # App branding, icons, and splash screens
+│   ├── 📂 src/
+│   │   ├── 📂 app/                         # Expo Router screens
+│   │   │   ├── 📄 _layout.tsx              # Root Navigation Stack layout
+│   │   │   ├── 📄 notifications.tsx        # Real-time alerts and notification center
+│   │   │   ├── 📄 disease-result.tsx       # AI foliar disease diagnostic result modal
+│   │   │   └── 📂 (tabs)/                  # 5-Tab Primary Farmer Dashboard
+│   │   │       ├── 📄 _layout.tsx          # Tab bar layout & icons
+│   │   │       ├── 📄 index.tsx            # 1. Home: Overview, Interlocks, Microclimate & Targets
+│   │   │       ├── 📄 irrigation.tsx       # 2. Irrigation: AI Closed-Loop & Solenoid Controls
+│   │   │       ├── 📄 fertilizer.tsx       # 3. Fertilizer: Live NPK Telemetry & Stage Targets
+│   │   │       ├── 📄 plant-health.tsx     # 4. Plant Health: Spray Lockout, GDD & Image AI
+│   │   │       └── 📄 farm.tsx             # 5. Profile: Nodes, Zones, Calibrations & Team
+│   │   ├── 📂 components/                  # Reusable UI component library
+│   │   │   ├── 📄 AppHeader.tsx            # Standardized header with MQTT badge
+│   │   │   ├── 📄 StatusBadge.tsx          # Status indicators (Online, Alert, Armed)
+│   │   │   ├── 📄 MetricCard.tsx           # Telemetry metric cards
+│   │   │   └── ...                         # SensorGrid, DeviceCard, Buttons
+│   │   ├── 📂 constants/
+│   │   │   └── 📄 theme.ts                 # Design tokens (Colors, Typography, Radius, Shadow)
+│   │   ├── 📂 data/                        # Static seeds and mock telemetry
+│   │   ├── 📂 services/                    # Local services and agent simulation loops
+│   │   └── 📂 types/                       # TypeScript interfaces (1:1 with Backend Schemas)
+│   ├── 📄 app.json                         # Expo configuration
+│   ├── 📄 package.json                     # Node.js dependencies
+│   └── 📄 tsconfig.json                    # Strict TypeScript configuration
 │
-├── 📂 project-architecture/              ← Multi-page Architecture Documentation Hub
-│   ├── 🌐 index.html                    ← Hub landing page (start here)
-│   ├── 🌐 system-overview.html          ← Full 4-layer system overview
-│   ├── 🌐 data-flow.html                ← End-to-end data flow & decision table
-│   ├── 🌐 hardware.html                 ← Hardware components & ESP32 pin map
-│   └── 🌐 cloud-intelligence.html       ← Cloud backend, AI models & State Machine
+├── 📂 project-architecture/                # Multi-page Interactive Web Architecture Hub
+│   ├── 🌐 index.html                       # Hub Landing Page
+│   ├── 🌐 system-overview.html             # Comprehensive 4-layer architectural breakdown
+│   ├── 🌐 data-flow.html                   # Signal flow diagrams and decision matrices
+│   ├── 🌐 hardware.html                    # Hardware schematics, ESP32 pinouts & sensor specs
+│   └── 🌐 cloud-intelligence.html          # State Machine, FAO-56 & GDD algorithm documentation
 │
-├── 📂 system-architecture/              ← Original single-page visualization
-│   └── 🌐 architecture.html
-│
-└── ... (source code & research artifacts coming soon)
+└── 📂 system-architecture/                 # Original system architecture blueprints
+    └── 🌐 architecture.html
 ```
+
+---
+
+## 🚀 Quick Start & Installation
+
+### 1. Mobile Application (`SmartFarm`)
+```bash
+# Navigate to the mobile app directory
+cd SmartFarm
+
+# Install dependencies
+npm install
+
+# Start the Expo development server
+npx expo start
+```
+- Press `i` to launch in the **iOS Simulator** (macOS).
+- Press `a` to launch in the **Android Emulator**.
+- Press `w` to open in a **Web Browser**.
+- Scan the terminal QR code using **Expo Go** on your physical iPhone or Android device.
+
+---
+
+### 2. Backend Intelligence Server (`FastAPI`)
+```bash
+# Navigate to the backend directory
+cd ../J26-IT-434_IoT_EchoSystem_For_Smart_Agriculture-Backend
+
+# Create and activate virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install requirements
+pip install -r requirements.txt
+
+# Start the Uvicorn ASGI server
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+- Interactive Swagger API Documentation: [http://localhost:8000/docs](http://localhost:8000/docs)
+- Interactive ReDoc: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+
+---
+
+### 3. Edge Firmware Flashing (`Arduino Uno` & `ESP-01`)
+```bash
+# Firmware repository location:
+cd ../J26-IT-434_IoT_EchoSystem_For_Smart_Agriculture_Firmware_For_IoT
+
+# 1. Flash Arduino Uno via Arduino IDE or avr-gcc:
+#    Open 'uno/agro/agro.ino' -> Target: Arduino Uno -> Port: /dev/ttyACM0
+
+# 2. Flash ESP-01 Wi-Fi bridge via ESP Flash Tool:
+#    Open 'esp-01.ino' -> Target: Generic ESP8266 Module -> Upload
+```
+
+---
+
+## 📊 Expected Agronomic & Sustainability Impact
+
+| Performance Metric | Traditional Approach | J26-IT-434 Ecosystem | Research Impact |
+|:---|:---|:---|:---|
+| 💧 **Irrigation Water Usage** | Static scheduled timer | Dynamic FAO-56 ($ET_0 \times K_c$) | **20% – 40% water conservation** |
+| 🌿 **Fertilizer Runoff** | Fixed calendar recipes | Soil NPK feedback & Anti-Leaching | **10% – 15% reduction in nutrient waste** |
+| 🐛 **Chemical Pesticide Use** | Reactive spraying after infestation | 7-day GDD predictive emergence alerts | **Up to 67% reduction in pesticide sprays** |
+| ⚡ **Operational Conflicts** | Uncoordinated manual interventions | Central State Machine & Interlocks | **Zero conflicting actuator commands** |
+| 🛡️ **Crop Root Health** | Vulnerable to waterlogging/wilting | Cyber-Physical Conflict Arbitration | **Guaranteed safe root-zone boundaries** |
 
 ---
 
 <div align="center">
 
-**SLIIT · Faculty of Computing · 4th Year Research · 2026**
-
-*Designed to champion sustainable, climate-resilient farming through intelligent closed-loop IoT technology.*
+**SLIIT · Faculty of Computing · 4th Year Research · 2026**  
+*Intelligent Multi-Agent Closed-Loop IoT Ecosystem for Smart Agriculture (`J26-IT-434`)*
 
 </div>
