@@ -241,12 +241,51 @@ Where:
 
 ---
 
-### 3. 🐛 Microclimate-Driven Predictive Pest Forecasting (GDD Model)
-Insect emergence is biologically governed by accumulated environmental heat units rather than calendar days. By capturing continuous microclimate readings from the DHT11, the system computes cumulative Growing Degree Days:
+### 3. 🐛 Predictive Pest Control & Machine Learning Forecaster
+**Uses real-time temperature, humidity, weather forecasts, and crop-stage data to predict pest risk using machine learning. Provides early warnings and supports spray-history validation and safe pest management recommendations.**
 
-$$GDD_{daily} = \left(\frac{T_{max} + T_{min}}{2}\right) - T_{base}$$
+Insect reproduction and nymph emergence are biologically driven by thermal heat units and ambient moisture rather than calendar dates. Our system unifies continuous IoT sensory feeds, external meteorological forecasts, and phenological crop tracking into a predictive machine learning pipeline to protect greenhouse tomato crops (*Solanum lycopersicum*) proactively.
 
-Where $T_{base} = 10.0^\circ\text{C}$ for greenhouse whiteflies (*Bemisia tabaci*) and leaf miners. When cumulative $GDD \ge \text{Threshold}$ ($540\text{ GDD}$), proactive alerts are sent to the mobile app **up to 7 days before physical crop infestation**.
+#### A. Multi-Source Feature Ingestion Pipeline
+The predictive engine continuously ingests four key environmental dimensions:
+1. **Real-Time Canopy Microclimate**: Ambient dry-bulb temperature ($T_{air}$) and relative humidity ($RH\%$) streamed continuously from field DHT11/DHT22 sensors.
+2. **7-Day Meteorological Weather Forecasts**: External forecast vectors (precipitation probability, diurnal temperature swings, barometric pressure) ingested via the OpenWeatherMap API to anticipate imminent pest-friendly microclimate conditions.
+3. **Phenological Crop-Stage Susceptibility**: Crop stage metadata (*Seedling*, *Vegetative*, *Flowering*, *Ripening*). For example, during the *Flowering* stage, soft succulent shoot growth and tender floral tissue present significantly higher vulnerability to sap-sucking pests.
+4. **Vapor Pressure Deficit (VPD)**: Real-time atmospheric dryness ($VPD$) derived via the Tetens formulation, serving as a biological proxy for leaf boundary layer moisture where fungal and pest spore germination occurs.
+
+#### B. Biological Formulation & Machine Learning Inference
+The predictive model combines biological **Growing Degree Days (GDD)** thermal accumulation with a multi-layer classification model to estimate pest outbreak probability ($P_{\text{risk}}$):
+
+$$GDD_{daily} = \max\left(0, \frac{T_{max} + T_{min}}{2} - T_{base}\right)$$
+
+$$\text{Cumulative Heat Units} = \sum_{t=1}^{D} GDD_t$$
+
+Where:
+- $T_{base} = 10.0^\circ\text{C}$ for greenhouse whiteflies (*Bemisia tabaci*), thrips, and leaf miners (*Tuta absoluta*).
+- $T_{max}, T_{min}$: 24-hour diurnal temperature extremes recorded by edge nodes.
+- **Machine Learning Risk Classification**:
+  $$P_{\text{risk}} = \sigma\left( \mathbf{W}_1 \cdot [GDD_{cum}, T_{avg}, RH_{avg}, VPD, \text{Rain}_{\text{forecast}}, \text{Stage}_{\text{weight}}] + b_1 \right)$$
+  When cumulative thermal units approach the species-specific threshold ($\ge 540\text{ GDD}$ for *Bemisia tabaci*), the model triggers proactive high-priority warnings **up to 7 days before physical crop emergence**.
+
+#### C. Proactive Risk Tiers & Early Warning Thresholds
+
+| Risk Level | GDD Buffer / Index | Outbreak Probability | System State | Recommended Action |
+|:---|:---|:---|:---|:---|
+| 🟢 **Low Risk** | $> 80\text{ GDD}$ remaining | $P_{\text{risk}} < 30\%$ | Nominal Monitoring | Zero chemical spray required; beneficial insect populations preserved |
+| 🟡 **Moderate Risk** | $30 - 80\text{ GDD}$ remaining | $30\% \le P_{\text{risk}} < 70\%$ | Advisory Warning | Increase visual trap scouting; inspect lower leaf epidermis; deploy yellow sticky cards |
+| 🔴 **High / Critical** | $< 30\text{ GDD}$ (Imminent) | $P_{\text{risk}} \ge 70\%$ | Emergence Alert | Queue targeted bio-pesticide or approved IPM spray; prepare 24-hr spray lockout |
+
+#### D. Spray-History Validation & Interlock Verification
+To prevent chemical over-application, pesticide resistance, and consumer health hazards, the system validates all past spray applications:
+- **Pre-Harvest Interval (PHI) Compliance**: Audits application dates against mandatory pre-harvest withdrawal windows to prevent harmful residues on harvested tomatoes.
+- **Chemical Mode of Action (MoA) Rotation**: Tracks active chemical ingredients in past spray logs to recommend rotational biological controls and avoid pest resistance build-up.
+- **Automated 24-Hour Spray–Irrigation Lock**: Immediately upon logging or executing an approved spray, the Central State Machine engages an automated 24-hour irrigation lockout, preventing overhead or drip water from washing active pesticide residues off foliage into the root zone.
+
+#### E. Safe Integrated Pest Management (IPM) Guidance
+When risk thresholds are exceeded, the system delivers structured, agronomic recommendations prioritized by safety:
+1. **Biological / Organic First Line**: Application of cold-pressed Neem oil ($5\text{ mL/L}$), *Bacillus thuringiensis* (Bt), or microbial bio-fungicides to suppress early instar nymphs without chemical toxicity.
+2. **Cultural & Physical Controls**: Strategic greenhouse vent screening, manual leaf defoliation of lower senescent leaves, and deployment of wavelength-calibrated yellow sticky insect traps.
+3. **Targeted Chemical Remediation (Last Resort)**: If threshold crosses critical limits, approved selective insecticides (e.g., Pyriproxyfen or Acetamiprid) are prescribed with precise dosages, accompanied by safety equipment reminders and harvest lockout periods.
 
 ---
 
