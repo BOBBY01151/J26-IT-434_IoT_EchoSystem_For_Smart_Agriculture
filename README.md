@@ -137,6 +137,7 @@ Hosts the core algorithms, cyber-physical safety policies, and machine learning 
 | Service / Engine | Formulation / Technology | Purpose |
 |---|---|---|
 | **FAO-56 Irrigation Engine** | $ET_c = ET_0 \times K_c$ | Computes exact daily water volume required for tomato growth phase |
+| **Dynamic Fertigation Engine** | $V_{\text{dose}} = (\Delta EC) \times V_{\text{root}} \times k \times f(\theta)$ | Automatically meters nutrient delivery based on soil moisture absorption and EC targets |
 | **Microclimate VPD Analyzer** | Tetens Equation | Calculates atmospheric dryness (VPD) to identify transpiration stress |
 | **GDD Pest Forecaster** | $\sum GDD = \frac{T_{max} + T_{min}}{2} - T_{base}$ | Proactively calculates heat unit accumulation for pest life-cycles |
 | **Arbitration Engine** | Dynamic Policy Rules | Resolves conflicts between AI predictions and farmer manual overrides |
@@ -180,10 +181,63 @@ $$V_{irr} = \left(ET_c \times A_{canopy}\right) + \Delta \theta_{root}$$
 
 ---
 
-### 2. 🧪 Dynamic Soil NPK & Anti-Leaching Guard
-Reads real-time nitrogen, phosphorus, and potassium concentrations directly from the optical/capacitive soil sensor via the ESP-01 bridge:
-- **Optimal Tomato Flowering NPK**: $N = 140–180\text{ mg/kg}$, $P = 90–140\text{ mg/kg}$, $K = 240–320\text{ mg/kg}$.
-- **Anti-Leaching Interlock**: Whenever soil moisture approaches field capacity ($\theta \ge 85\%$), the Central Coordination Engine automatically locks fertigation actuators to eliminate chemical runoff into local water tables.
+### 2. 🧪 Dynamic Soil Moisture-Driven Automated Fertigation Model *(Tomato Crop Specific)*
+Rather than applying arbitrary or fixed calendar fertilizer recipes that lead to root salt burn or groundwater contamination, our closed-loop fertilization model continuously ingests real-time **Volumetric Soil Moisture Content ($\theta$, % VWC)** and **Root-Zone Electrical Conductivity ($EC$, mS/cm / NPK)** from the field sensors.
+
+#### A. Soil Moisture-Governed Absorption Window
+Nutrient uptake in tomato plants is biologically coupled with soil water matric potential. The system automatically gates fertilizer delivery according to the real-time soil moisture status:
+
+$$\text{Fertigation State} = \begin{cases} 
+\text{BLOCKED (Salt Burn Hazard)}, & \theta < \theta_{\text{min\_uptake}} \quad (< 25\%) \\
+\text{ACTIVE (Automated Micro-Dosing)}, & \theta_{\text{min\_uptake}} \le \theta \le \theta_{\text{max\_uptake}} \quad (30\% - 45\%) \\
+\text{SUPPRESSED (Anti-Leaching Interlock)}, & \theta \ge \theta_{\text{saturation}} \quad (\ge 85\%)
+\end{cases}$$
+
+- **$\theta < 25\%$ (Critically Dry Soil)**: Fertilization is automatically locked out to prevent osmotic shock and fertilizer root burn; freshwater irrigation is scheduled first to restore root turgor pressure.
+- **$30\% \le \theta \le 45\%$ (Optimal Uptake Window)**: Root hair transpiration and capillary pressure are at peak efficiency; the model computes and automatically dispenses calibrated liquid fertilizer micro-doses directly into the irrigation line.
+- **$\theta \ge 85\%$ (Near Field Capacity)**: The **Anti-Leaching Guard** activates automatically, blocking all fertilizer dispensing to ensure zero chemical runoff into groundwater.
+
+#### B. Automated Nutrient Dose Formulation ($V_{\text{dose}}$)
+For greenhouse tomato crops (*Solanum lycopersicum*), the automated fertilizer dosing engine calculates the required liquid stock solution volume based on the electrical conductivity deficit ($\Delta EC$) and current soil moisture:
+
+$$V_{\text{dose}} = \left(EC_{\text{target}}(\text{Stage}) - EC_{\text{soil}}\right) \times V_{\text{root}} \times k_{\text{calibration}} \times f(\theta)$$
+
+Where:
+- $EC_{\text{target}}(\text{Stage})$: Target electrical conductivity for the active tomato phenological stage.
+- $EC_{\text{soil}}$: Real-time root-zone EC reading (or calibrated NPK stoichiometric sum from sensor inputs).
+- $V_{\text{root}}$: Active root-zone soil volume ($200\text{ m}^2$ greenhouse canopy).
+- $k_{\text{calibration}}$: Dilution factor of the concentrated stock solution (A+B mix).
+- $f(\theta) = \frac{\theta - \theta_{\text{min}}}{\theta_{\text{optimal}} - \theta_{\text{min}}}$: Moisture scaling factor ensuring optimal solute diffusion without saturating the root environment.
+
+#### C. Tomato Phenological Stage NPK & Moisture Target Profiles
+
+| Growth Stage | Target Moisture ($\theta$) | Target EC | Nitrogen (N) | Phosphorus (P) | Potassium (K) | Agronomic Focus |
+|:---|:---|:---|:---|:---|:---|:---|
+| 🌱 **Seedling** | $25\% - 35\%$ | $1.2 - 1.5\text{ mS/cm}$ | $100–140\text{ mg/kg}$ | $50–80\text{ mg/kg}$ | $120–160\text{ mg/kg}$ | Early rootlet formation; mild nutrient concentration to avoid root burn |
+| 🌿 **Vegetative** | $30\% - 40\%$ | $1.5 - 1.8\text{ mS/cm}$ | $160–220\text{ mg/kg}$ | $60–100\text{ mg/kg}$ | $180–240\text{ mg/kg}$ | High nitrogen demand for foliage biomass & chlorophyll synthesis |
+| 🌸 **Flowering** | $35\% - 45\%$ | $1.8 - 2.2\text{ mS/cm}$ | $140–180\text{ mg/kg}$ | $90–140\text{ mg/kg}$ | $240–320\text{ mg/kg}$ | Potassium & phosphorus surge to ensure flower truss set & blossom-end rot prevention |
+| 🍅 **Ripening** | $30\% - 38\%$ | $2.0 - 2.4\text{ mS/cm}$ | $120–160\text{ mg/kg}$ | $80–120\text{ mg/kg}$ | $280–360\text{ mg/kg}$ | Maximum potassium accumulation to boost fruit brix (sweetness), firmness & size |
+| 🧺 **Harvest** | $25\% - 32\%$ | $1.4 - 1.8\text{ mS/cm}$ | $100–140\text{ mg/kg}$ | $60–90\text{ mg/kg}$ | $200–260\text{ mg/kg}$ | Tapering fertilization to maintain vine longevity and prevent post-harvest rot |
+
+#### D. End-to-End Closed-Loop Actuation Workflow
+```
+[Soil Moisture & NPK Probes] ──► [Arduino Uno + ESP-01 Bridge]
+                                              │ (MQTT Telemetry: agro/out/<mac>/n,p,k)
+                                              ▼
+                                 [Cloud Coordination Engine]
+                                              │
+                      ┌───────────────────────┴───────────────────────┐
+                      ▼                                               ▼
+         Is θ in 30%–45% window?                             Is θ ≥ 85%?
+          ├── NO (Dry <25%): Trigger water first             └── YES: ENGAGE ANTI-LEACHING LOCK
+          └── YES: Compute V_dose via ΔEC                             (Suppress nutrient pump)
+                      │
+                      ▼
+        [Actuate Dosing Relay (Pin 26)] ──► [Inject Nutrients into Manifold]
+                      │
+                      ▼
+        [Monitor EC Delta until target achieved] ──► [Auto-Shutoff Relay]
+```
 
 ---
 
